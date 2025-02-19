@@ -18,8 +18,8 @@ let materialType = [];
 
 let materialAbsorption = {
   "none": [1, 1, 1],
-  "test1": [1, 1, 0],//増減が激しいとカット
-  "test2": [0, 1, 1],//増減が少ないとかっと
+  "test1": [0, 1, 1],//増減が激しいとカット
+  "test2": [1, 1, 0],//増減が少ないとかっと
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
@@ -126,7 +126,7 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.4)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       // 1,1 : 1, 0, 1
