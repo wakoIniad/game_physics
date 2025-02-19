@@ -5,15 +5,13 @@ let nextGrid = [];
 
 const defaultDamping = 0.99; // 減衰率
 const defaultWaveSpeed = 0.4;  // 波の伝搬速度
-const defaultReflection = 0;  // 反射率 
 const defaultTransmission = 1; // 透過率 
 
 let damping = [];
 let waveSpeed = [];
-let reflection =  [];  
-let transmission = []; 
+let transmission = []; //反射率+透過率 = 1
 
-let resolution = 8; // セルの大きさ
+let resolution = 2; // セルの大きさ
 
 function setup() {
   createCanvas(400, 400);
@@ -28,7 +26,6 @@ function setup() {
 
     damping[i] = [];
     waveSpeed[i] = [];
-    reflection[i] = [];
     transmission[i] = [];
     for (let j = 0; j < rows; j++) {
       grid[i][j] = 0;
@@ -37,7 +34,6 @@ function setup() {
       
       damping[i][j] = defaultDamping;
       waveSpeed[i][j] = defaultWaveSpeed;
-      reflection[i][j] = defaultReflection;
       transmission[i][j] = defaultTransmission;
     }
   }
@@ -49,17 +45,23 @@ function draw() {
   // 波の更新
   for (let i = 1; i < cols - 1; i++) {
     for (let j = 1; j < rows - 1; j++) {
+      
       // 波動方程式の離散化（差分法）
       nextGrid[i][j] = 
         2 * grid[i][j] - prevGrid[i][j] +
         waveSpeed[i][j] * (
-          grid[i+1][j] + grid[i-1][j] +
-          grid[i][j+1] + grid[i][j-1] -
-          4 * grid[i][j]
+          grid[i+1][j] * transmission[i+1][j] + 
+          grid[i-1][j] * transmission[i-1][j] +
+          grid[i][j+1] * transmission[i][j+1] +
+          grid[i][j-1] * transmission[i][j-1] -
+          grid[i][j] * (transmission[i+1][j] + transmission[i-1][j] +
+            transmission[i][j+1] + transmission[i][j-1])
         );
 
       // 減衰を適用
       nextGrid[i][j] *= damping[i][j];
+
+      
     }
   }
 
@@ -71,7 +73,8 @@ function draw() {
 
       // 描画
       let c = map(grid[i][j], -1, 1, 0, 255);
-      fill(c);
+      let c2 = map(transmission[i][j], -1, 1, 0, 255);
+      fill(c, c, c2);
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
     }
