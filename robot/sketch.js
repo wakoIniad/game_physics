@@ -25,6 +25,17 @@ let materialAbsorption = {
   "glass": [0.5, 0.0, 0],
 };
 
+
+function test2(x,y,dx,dy,material,tr=1) {
+  let xx = x - dx;
+  let yy = y - dy;
+  const M = Math.max(Math.abs(xx),Math.abs(yy));
+  for(let i = 0;i < M;i++) {
+    materialType[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = material;
+    transmission[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = tr
+  }
+}
+
 function setup() {
   createCanvas(400, 100);
   cols = width / resolution;
@@ -51,15 +62,6 @@ function setup() {
       transmission[i][j] = defaultTransmission;
 
       materialType[i][j] = defaultMaterialType;
-    }
-  }
-  function test2(x,y,dx,dy,material,tr=1) {
-    let xx = x - dx;
-    let yy = y - dy;
-    const M = Math.max(Math.abs(xx),Math.abs(yy));
-    for(let i = 0;i < M;i++) {
-      materialType[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = material;
-      transmission[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = tr
     }
   }
   function test(posX,posY,material,speed) {
@@ -106,6 +108,8 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
 }
 
 function draw() {
+  const wallX = (~~(frameCount/16));
+  test2(199-wallX,0,199-wallX,50,"test3",0);
   background(0);
 
   // 波の更新
