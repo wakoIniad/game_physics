@@ -129,9 +129,11 @@ function draw() {
       const smoothingFactor = absorption[0];
       nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
-      let d = 1.0 - absorption[2] * Math.abs(velocity);
-      nextGrid[i][j] = nextGrid[i][j] * d;
-
+//if(velocity)      console.log(velocity)
+      //let d = 1.0 - absorption[2] * Math.abs(velocity);
+      let d2 = absorption[2] * velocity;
+      //nextGrid[i][j] = nextGrid[i][j] * d;
+      nextGrid[i][j] = nextGrid[i][j] - d2;
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
