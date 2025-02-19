@@ -5,7 +5,7 @@ let nextGrid = [];
 
 let resolution = 2; // セルの大きさ
 
-const defaultDamping = 0.99; // 減衰率
+const defaultDamping = 1; // 減衰率
 const defaultWaveSpeed = 0.2;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
@@ -52,48 +52,32 @@ function setup() {
       materialType[i][j] = defaultMaterialType;
     }
   }
-
+  function test(posX,posY,material,speed) {
   //テスト用の障害物
-  for(let i = 0;i < 2*Math.PI;i+=0.01) {
-    let x = ~~(Math.sin(i)*20) + 120
-    let y = ~~(Math.cos(i)*20) + 120
-    
-    
-    materialType[x][y]   = "test1";
-  }
-  for(let r = 0;r < 50;r++) {
-    for(let i = 0;i < 2*Math.PI;i+=0.05) {
-      let x = ~~(Math.sin(i)*r) + 120
-      let y = ~~(Math.cos(i)*r) + 120
-      
-      waveSpeed[x][y]   = 0.1;
-      waveSpeed[x][y+1] = 0.1;
-      waveSpeed[x][y-1] = 0.1;
-      waveSpeed[x+1][y] = 0.1;
-      waveSpeed[x-1][y] = 0.1;
-//      materialType[x][y]   = "test1";
+    for(let i = 0;i < 2*Math.PI;i+=0.01) {
+      let x = ~~(Math.sin(i)*20) + cols/2 + posX
+      let y = ~~(Math.cos(i)*20) + rows/2 + posY
+
+
+      materialType[x][y]   = material;
+    }
+    for(let r = 0;r < 50;r++) {
+      for(let i = 0;i < 2*Math.PI;i+=0.05) {
+        let x = ~~(Math.sin(i)*r) + cols/2 + posX
+        let y = ~~(Math.cos(i)*r) + rows/2 + posY
+
+        waveSpeed[x][y]   = speed;
+        waveSpeed[x][y+1] = speed;
+        waveSpeed[x][y-1] = speed;
+        waveSpeed[x+1][y] = speed;
+        waveSpeed[x-1][y] = speed;
+      }
     }
   }
-  
-  for(let i = 0;i < 2*Math.PI;i+=0.01) {
-    let x = ~~(Math.sin(i)*20) + 50
-    let y = ~~(Math.cos(i)*20) + 50
-    
-    materialType[x][y]   = "test2";
-  }
-  for(let r = 0;r < 50;r++) {
-    for(let i = 0;i < 2*Math.PI;i+=0.05) {
-      let x = ~~(Math.sin(i)*r) + 50
-      let y = ~~(Math.cos(i)*r) + 50
-      
-      waveSpeed[x][y]   = 0.1;
-      waveSpeed[x][y+1] = 0.1;
-      waveSpeed[x][y-1] = 0.1;
-      waveSpeed[x+1][y] = 0.1;
-      waveSpeed[x-1][y] = 0.1;
-//      materialType[x][y]   = "test2";
-    }
-  }
+  test(-50,-50,"test1",0.1);//増減が激しいとカット
+  test(-50,+50,"test1",0.5);//増減が激しいとカット
+  test(+50,-50,"test2",0.1);//増減が少ないとカット 
+  test(+50,+50,"test2",0.5);//増減が少ないとカット
 }
 
 function draw() {
@@ -170,15 +154,19 @@ function draw() {
       grid[i][j] = nextGrid[i][j];
 
       // 描画
-      let c = map(grid[i][j], -1, 1, 0, 255);
+      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
       let ct = map(1-transmission[i][j] -1, 1, 0, 255);
-      let cw = map(waveSpeed[i][j], 0, 0.5, 0, 255);
+      let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
       fill(c, c, ct);
       if(materialType[i][j].startsWith("test")) {
-        fill(c,c,cw)
+        if(materialType[i][j] === "test1") {
+          fill(c,c,255)
+        } else {
+          fill(255,c,c)
+        }
       } else {
-        
-        fill(c);
+        //fill(c, cw, c);
+        fill(c)
       }
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
@@ -190,7 +178,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      grid[x][y] = 1;
+      grid[x][y] = 2;
     }
   }
   if(keyIsPressed) {
