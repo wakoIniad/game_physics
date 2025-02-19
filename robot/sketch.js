@@ -3,7 +3,7 @@ let grid = [];
 let prevGrid = [];
 let nextGrid = [];
 
-const defaultDamping = 0.99; // 減衰率
+const defaultDamping = 1; // 減衰率
 const defaultWaveSpeed = 0.4;  // 波の伝搬速度
 const defaultTransmission = 1; // 透過率 
 
@@ -73,7 +73,7 @@ function draw() {
 
       // 描画
       let c = map(grid[i][j], -1, 1, 0, 255);
-      let c2 = map(transmission[i][j], -1, 1, 0, 255);
+      let c2 = map(1-transmission[i][j], -1, 1, 0, 255);
       fill(c, c, c2);
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
@@ -86,6 +86,18 @@ function draw() {
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
       grid[x][y] = 1;
+    }
+  }
+  if(keyIsPressed) {
+    let x = floor(mouseX / resolution);
+    let y = floor(mouseY / resolution);
+    if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
+      transmission[x][y] = 0;
+      
+      transmission[x][y+1] = 0;
+      transmission[x][y-1] = 0;
+      transmission[x+1][y] = 0;
+      transmission[x-1][y] = 0;
     }
   }
 }
