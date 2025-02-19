@@ -3,8 +3,10 @@ let grid = [];
 let prevGrid = [];
 let nextGrid = [];
 
-const defaultDamping = 1; // 減衰率
-const defaultWaveSpeed = 0.4;  // 波の伝搬速度
+let resolution = 2; // セルの大きさ
+
+const defaultDamping = 0.99; // 減衰率
+const defaultWaveSpeed = 0.2;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -13,12 +15,13 @@ let waveSpeed = [];
 let transmission = []; //反射率+透過率 = 1
 let materialType = [];
 
-let resolution = 2; // セルの大きさ
 
 let materialAbsorption = {
   "none": [0, 0, 0],
-  "water": [0.1,  0.6, 0.9],
-  "glass": [0.05, 0.7, 0.95],
+  "test1": [0, 0, 1],//増減が激しいとカット
+  "test2": [1, 0, 0],//増減が少ないとかっと
+  "water": [0,  0.0, 0.5],
+  "glass": [0.5, 0.0, 0],
 };
 
 function setup() {
@@ -49,6 +52,54 @@ function setup() {
       materialType[i][j] = defaultMaterialType;
     }
   }
+
+  //テスト用の障害物
+  for(let i = 0;i < 2*Math.PI;i+=0.07) {
+    let x = ~~(Math.sin(i)*20) + 120
+    let y = ~~(Math.cos(i)*20) + 120
+    
+    
+    materialType[x][y]   = "test1";
+    materialType[x][y+1] = "test1";
+    materialType[x][y-1] = "test1";
+    materialType[x+1][y] = "test1";
+    materialType[x-1][y] = "test1";
+  }
+  for(let r = 0;r < 25;r++) {
+    for(let i = 0;i < 2*Math.PI;i+=0.07) {
+      let x = ~~(Math.sin(i)*r) + 120
+      let y = ~~(Math.cos(i)*r) + 120
+      
+      waveSpeed[x][y]   = 0.1;
+      waveSpeed[x][y+1] = 0.1;
+      waveSpeed[x][y-1] = 0.1;
+      waveSpeed[x+1][y] = 0.1;
+      waveSpeed[x-1][y] = 0.1;
+    }
+  }
+  
+  for(let i = 0;i < 2*Math.PI;i+=0.07) {
+    let x = ~~(Math.sin(i)*20) + 50
+    let y = ~~(Math.cos(i)*20) + 50
+    
+    materialType[x][y]   = "test1";
+    materialType[x][y+1] = "test1";
+    materialType[x][y-1] = "test1";
+    materialType[x+1][y] = "test1";
+    materialType[x-1][y] = "test1";
+  }
+  for(let r = 0;r < 25;r++) {
+    for(let i = 0;i < 2*Math.PI;i+=0.07) {
+      let x = ~~(Math.sin(i)*r) + 50
+      let y = ~~(Math.cos(i)*r) + 50
+      
+      waveSpeed[x][y]   = 0.4;
+      waveSpeed[x][y+1] = 0.4;
+      waveSpeed[x][y-1] = 0.4;
+      waveSpeed[x+1][y] = 0.4;
+      waveSpeed[x-1][y] = 0.4;
+    }
+  }
 }
 
 function draw() {
@@ -65,9 +116,18 @@ function draw() {
           grid[i+1][j] * transmission[i+1][j] + 
           grid[i-1][j] * transmission[i-1][j] +
           grid[i][j+1] * transmission[i][j+1] +
-          grid[i][j-1] * transmission[i][j-1] -
-          grid[i][j] * (transmission[i+1][j] + transmission[i-1][j] +
-            transmission[i][j+1] + transmission[i][j-1])
+          grid[i][j-1] * transmission[i][j-1]
+          
+          //+(grid[i+1][j+1] * transmission[i+1][j+1] + 
+          //grid[i-1][j-1] * transmission[i-1][j-1] +
+          //grid[i-1][j+1] * transmission[i-1][j+1] +
+          //grid[i+1][j-1] * transmission[i+1][j-1] ) * 2 ** 0.5
+          - grid[i][j] * (
+            transmission[i+1][j] + transmission[i-1][j] +
+            transmission[i][j+1] + transmission[i][j-1]
+            //+ (transmission[i+1][j+1] + transmission[i-1][j-1] + 
+            //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
+          )
         );
 
       // 減衰を適用
@@ -86,18 +146,18 @@ function draw() {
       let attenuatedMid = midFreq * (1 - absorption[1]); // 中周波の減衰
       let attenuatedHigh = highFreq * (1 - absorption[2]); // 高周波の減衰
 
-      // 吸収後のエネルギーを計算
-      let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
-      let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
-      // エネルギーが増えないようにスケール補正
-      if (newEnergy > totalEnergy && newEnergy > 0) {
-        let scale_ = totalEnergy / newEnergy;
-        attenuatedLow *= scale_;
-        attenuatedMid *= scale_;
-        attenuatedHigh *= scale_;
-      }
-      if(attenuatedLow > 0.1)console.log((attenuatedLow + attenuatedMid + attenuatedHigh)/
-      nextGrid[i][j]);
+      //// 吸収後のエネルギーを計算
+      //let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
+      //let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
+      //// エネルギーが増えないようにスケール補正
+      //if (newEnergy > totalEnergy && newEnergy > 0) {
+      //  let scale_ = totalEnergy / newEnergy;
+      //  attenuatedLow *= scale_;
+      //  attenuatedMid *= scale_;
+      //  attenuatedHigh *= scale_;
+      //}
+      //if(attenuatedLow > 0.1)console.log((attenuatedLow + attenuatedMid + attenuatedHigh)/
+      //nextGrid[i][j]);
       // 吸収後の値を反映
       nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
@@ -112,7 +172,14 @@ function draw() {
       // 描画
       let c = map(grid[i][j], -1, 1, 0, 255);
       let c2 = map(1-transmission[i][j], -1, 1, 0, 255);
-      fill(c, c, c2);
+      let c3 = map(waveSpeed[i][j], 0, 0.5, 0, 255);
+      fill(c3, c, c2);
+      if(materialType[i][j].startsWith("test")) {
+        fill(c,c,c3)
+      } else {
+        
+      fill(c)
+      }
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
     }
@@ -130,12 +197,18 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      transmission[x][y] = 0;
+      transmission[x][y]   = 1;
+      transmission[x][y+1] = 1;
+      transmission[x][y-1] = 1;
+      transmission[x+1][y] = 1;
+      transmission[x-1][y] = 1;
+
       
-      transmission[x][y+1] = 0;
-      transmission[x][y-1] = 0;
-      transmission[x+1][y] = 0;
-      transmission[x-1][y] = 0;
+      materialType[x][y]   = "none2";
+      materialType[x][y+1] = "none2";
+      materialType[x][y-1] = "none2";
+      materialType[x+1][y] = "none2";
+      materialType[x-1][y] = "none2";
     }
   }
 }
