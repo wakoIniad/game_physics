@@ -77,9 +77,9 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = (nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = nextGrid[i][j] - prevGrid[i][j];
-      let midFreq = nextGrid[i][j] - lowFreq; // 中周波（補間成分）
+      let lowFreq = (grid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = nextGrid[i][j] - grid[i][j];
+      let midFreq = grid[i][j] - lowFreq; // 中周波（補間成分）
 
       // 吸収を適用
       let attenuatedLow = lowFreq * (1 - absorption[0]); // 低周波の減衰
@@ -87,15 +87,17 @@ function draw() {
       let attenuatedHigh = highFreq * (1 - absorption[2]); // 高周波の減衰
 
       // 吸収後のエネルギーを計算
-      let totalEnergy = nextGrid[i][j];
+      let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
       let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
       // エネルギーが増えないようにスケール補正
-      if (newEnergy > 0) {
+      if (newEnergy > totalEnergy && newEnergy > 0) {
         let scale_ = totalEnergy / newEnergy;
         attenuatedLow *= scale_;
         attenuatedMid *= scale_;
         attenuatedHigh *= scale_;
       }
+      if(attenuatedLow > 0.1)console.log((attenuatedLow + attenuatedMid + attenuatedHigh)/
+      nextGrid[i][j]);
       // 吸収後の値を反映
       nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
