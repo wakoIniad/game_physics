@@ -125,8 +125,7 @@ function draw() {
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
-<<<<<<< Updated upstream
-=======
+
       const smoothingFactor = absorption[0];
       nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
@@ -136,7 +135,6 @@ function draw() {
       //nextGrid[i][j] = nextGrid[i][j] * d;
       nextGrid[i][j] = nextGrid[i][j] - d2;
 
->>>>>>> Stashed changes
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
