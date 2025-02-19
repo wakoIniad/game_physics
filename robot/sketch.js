@@ -133,8 +133,12 @@ function drawF() {
     }
     cols -= 1;
   }
+  for(let i = 1;i < rows -1;i++) {
+    //点で放出しないようにする
+    grid[cols-1][i] = 1;
+  }
 
-  grid[cols-4][22] = 1;
+  //grid[cols-4][22] = 1;
 
   
   background(0);
@@ -192,9 +196,9 @@ function drawF() {
       // 
 
       // 吸収を適用
-      let attenuatedLow = lowFreq   * absorption[0]; // 低周波の減衰
-      let attenuatedMid = midFreq   * absorption[1]; // 中周波の減衰
-      let attenuatedHigh = highFreq * absorption[2]; // 高周波の減衰
+      let attenuatedLow = lowFreq   * (1-absorption[0]); // 低周波の減衰
+      let attenuatedMid = midFreq   * (1-absorption[1]); // 中周波の減衰
+      let attenuatedHigh = highFreq * (1-absorption[2]); // 高周波の減衰
 
       //// 吸収後のエネルギーを計算
       //let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
@@ -215,7 +219,7 @@ function drawF() {
    // );
       }
       // 吸収後の値を反映
-      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
