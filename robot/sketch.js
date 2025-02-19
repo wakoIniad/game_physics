@@ -17,9 +17,9 @@ let materialType = [];
 
 
 let materialAbsorption = {
-  "none": [0, 0, 0],
-  "test1": [0, 0, 1],//増減が激しいとカット
-  "test2": [1, 0, 0],//増減が少ないとかっと
+  "none": [1, 1, 1],
+  "test1": [1, 1, 0],//増減が激しいとカット
+  "test2": [0, 1, 1],//増減が少ないとかっと
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
@@ -59,8 +59,8 @@ function setup() {
       let y = ~~(Math.cos(i)*20) + rows/2 + posY
 
 
-      //materialType[x][y]   = material;
-      damping[x][y] = 1;
+      materialType[x][y]   = material;
+      //damping[x][y] = 1;
     }
     for(let r = 0;r < 50;r++) {
       for(let i = 0;i < 2*Math.PI;i+=0.05) {
@@ -119,37 +119,14 @@ function draw() {
         ) ;
 
       // 減衰を適用
-      nextGrid[i][j] -= damping[i][j] * (nextGrid[i][j] - grid[i][j]);
-//      nextGrid[i][j] *= damping[i][j] * (grid[i][j] - prevGrid[i][j]);
-
-// 0.6c + 0.4p
-// 1c - 0.4c - 0.6p = 0.6c - 0.6p
-// 0c + 1p
-// 
-
-//a(low)
-// ・a・c + (1-a)・p
-// b(high)
-// ・1c - b・c - (1-b)・p = (1-b)・c - (1- b)・p
-// a・c + (1-a)・p -  ( (1-b)・c - (1- b)・p )
-// ・= a・c + (1-a)・p - (1-b)・c + (1- b)・p
-// = low - high
-
-/**
- * high + low + low - high = 2low
- * 
- * high + low + high - low = 2high
- * 
- * low/2 + high - low/2 + high/2 = high
- * 
- * low + (X - low) + low - X + low = high
- */
+      const velocity = nextGrid[i][j] - grid[i][j];
+      nextGrid[i][j] -= damping[i][j] * (velocity);
 
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(grid[i][j], prevGrid[i][j], 0.4)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.4)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       // 1,1 : 1, 0, 1
@@ -160,9 +137,9 @@ function draw() {
       // 
 
       // 吸収を適用
-      let attenuatedLow = lowFreq * (1 - absorption[0]); // 低周波の減衰
-      let attenuatedMid = midFreq * (1 - absorption[1]); // 中周波の減衰
-      let attenuatedHigh = highFreq * (1 - absorption[2]); // 高周波の減衰
+      let attenuatedLow = lowFreq   * absorption[0]; // 低周波の減衰
+      let attenuatedMid = midFreq   * absorption[1]; // 中周波の減衰
+      let attenuatedHigh = highFreq * absorption[2]; // 高周波の減衰
 
       //// 吸収後のエネルギーを計算
       //let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
@@ -175,15 +152,15 @@ function draw() {
       //  attenuatedHigh *= scale_;
       //}
       const s = attenuatedLow + attenuatedMid + attenuatedHigh;
-      if(nextGrid[i][j] > 0 && (absorption[2] || absorption[0]))
+      if(nextGrid[i][j] > 0 && !(absorption[2] && absorption[0]))
         { 
           console.log((s)/
       nextGrid[i][j]
-    //  , attenuatedLow, attenuatedMid, attenuatedHigh
+      , attenuatedLow, attenuatedMid, attenuatedHigh
     );
       }
       // 吸収後の値を反映
-      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
