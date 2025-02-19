@@ -53,15 +53,11 @@ function setup() {
     }
   }
   function test2(x,y,dx,dy,material) {
-    const mx = Math.min(x,dx);
-    const MX = Math.max(x,dx);
-    const my = Math.min(y,dy);
-    const MY = Math.max(y,dy);
-    let xx = MX-mx;
-    let yy = MY-my;
-    const M = Math.max(xx,yy);
+    let xx = x - dx;
+    let yy = y - dy;
+    const M = Math.max(Math.abs(xx),Math.abs(yy));
     for(let i = 0;i < M;i++) {
-      materialType[~~(mx+xx*(i/M))][~~(my+yy*(i/M))] = material;
+      materialType[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = material;
     }
   }
   function test(posX,posY,material,speed) {
@@ -88,7 +84,7 @@ function setup() {
     }
   }
   test2(20,20,60,0,"test1");
-  //test2(20,30,60,50,"test1");
+  test2(20,30,60,50,"test1");
   //test(-50,-50,"test1",0.1);//増減が激しいとカット
   //test(-50,+50,"test1",0.5);//増減が激しいとカット
   //test(+50,-50,"test2",0.1);//増減が少ないとカット 
