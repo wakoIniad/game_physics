@@ -54,19 +54,15 @@ function setup() {
   }
 
   //テスト用の障害物
-  for(let i = 0;i < 2*Math.PI;i+=0.07) {
+  for(let i = 0;i < 2*Math.PI;i+=0.01) {
     let x = ~~(Math.sin(i)*20) + 120
     let y = ~~(Math.cos(i)*20) + 120
     
     
-    materialType[x][y]   = "test1";
-    materialType[x][y+1] = "test1";
-    materialType[x][y-1] = "test1";
-    materialType[x+1][y] = "test1";
-    materialType[x-1][y] = "test1";
+    materialType[x][y]   = "test2";
   }
-  for(let r = 0;r < 25;r++) {
-    for(let i = 0;i < 2*Math.PI;i+=0.07) {
+  for(let r = 0;r < 50;r++) {
+    for(let i = 0;i < 2*Math.PI;i+=0.05) {
       let x = ~~(Math.sin(i)*r) + 120
       let y = ~~(Math.cos(i)*r) + 120
       
@@ -78,26 +74,22 @@ function setup() {
     }
   }
   
-  for(let i = 0;i < 2*Math.PI;i+=0.07) {
+  for(let i = 0;i < 2*Math.PI;i+=0.01) {
     let x = ~~(Math.sin(i)*20) + 50
     let y = ~~(Math.cos(i)*20) + 50
     
-    materialType[x][y]   = "test1";
-    materialType[x][y+1] = "test1";
-    materialType[x][y-1] = "test1";
-    materialType[x+1][y] = "test1";
-    materialType[x-1][y] = "test1";
+    materialType[x][y]   = "test2";
   }
-  for(let r = 0;r < 25;r++) {
-    for(let i = 0;i < 2*Math.PI;i+=0.07) {
+  for(let r = 0;r < 50;r++) {
+    for(let i = 0;i < 2*Math.PI;i+=0.05) {
       let x = ~~(Math.sin(i)*r) + 50
       let y = ~~(Math.cos(i)*r) + 50
       
-      waveSpeed[x][y]   = 0.4;
-      waveSpeed[x][y+1] = 0.4;
-      waveSpeed[x][y-1] = 0.4;
-      waveSpeed[x+1][y] = 0.4;
-      waveSpeed[x-1][y] = 0.4;
+      waveSpeed[x][y]   = 0.5;
+      waveSpeed[x][y+1] = 0.5;
+      waveSpeed[x][y-1] = 0.5;
+      waveSpeed[x+1][y] = 0.5;
+      waveSpeed[x-1][y] = 0.5;
     }
   }
 }
@@ -156,8 +148,12 @@ function draw() {
       //  attenuatedMid *= scale_;
       //  attenuatedHigh *= scale_;
       //}
-      //if(attenuatedLow > 0.1)console.log((attenuatedLow + attenuatedMid + attenuatedHigh)/
-      //nextGrid[i][j]);
+      const s = attenuatedLow + attenuatedMid + attenuatedHigh;
+      if(nextGrid[i][j] > 0 && (absorption[2] || absorption[0]))
+        { 
+          console.log((s)/
+      nextGrid[i][j]);
+      }
       // 吸収後の値を反映
       nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
