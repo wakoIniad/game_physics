@@ -6,7 +6,7 @@ let nextGrid = [];
 let resolution = 2; // セルの大きさ
 
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 0.4;  // 波の伝搬速度(1未満)
+const defaultWaveSpeed = 0.5;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -18,8 +18,8 @@ let materialType = [];
 
 let materialAbsorption = {
   "none": [0, 0, 0],
-  "test1": [0, 0, 0.6],//増減が激しいとカット
-  "test2": [0.6, 0, 0],//増減が少ないとかっと
+  "test1": [0, 0, 0.5],//増減が激しいとカット
+  "test2": [0.5, 0, 0],//増減が少ないとかっと
   "test3": [0,0,0],
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
@@ -37,6 +37,7 @@ function test2(x,y,dx,dy,material,tr=1) {
 }
 
 function setup() {
+  frameRate(60);
   createCanvas(400, 100);
   cols = width / resolution;
   rows = height / resolution;
@@ -87,11 +88,18 @@ function setup() {
       }
     }
   }
-  function t2(x) {
-    test2(x+0,20,x+40,0,"test3",0);
-    test2(x+0,30,x+40,50,"test3",0);
+  function t2(x,t) {
+    test2(x+0,20,x+40,0,"test1",0);
+    test2(x+0,30,x+40,50,"test2",0);
   }
-  t2(20);
+  t2(20,"test1");
+  t2(80,"test2");
+  //t2(100);
+  //t2(140);
+  //t2(200);
+  //t2(240);
+  //t2(280);
+  //t2(320);
   //test(-50,-50,"test1",0.1);//増減が激しいとカット
   //test(-50,+50,"test1",0.5);//増減が激しいとカット
   //test(+50,-50,"test2",0.1);//増減が少ないとカット 
@@ -106,22 +114,29 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
   let lowPassValue = lowPassFilter(previousInputValue, previousLowPassValue, b);
   return currentValue - lowPassValue;
 }
-
 function draw() {
-  const wallX = (~~(frameCount/16));
+
+  for(var i = 0;i < 1;i++) {
+    drawF();
+  }
+}
+function drawF() {
+  const wallX = (~~(frameCount/4));
   //test2(199-wallX,0,199-wallX,50,"test3",0);
   //test2(198-wallX,0,198-wallX,50,"test3",0.15);
   //test2(197-wallX,0,197-wallX,50,"test3",0.2);
   //test2(196-wallX,0,196-wallX,50,"test3",0.4);
   //test2(195-wallX,0,195-wallX,50,"test3",0.8);
-  if(frameCount%16 == 0) {
-  for (let i = 1; i < cols - 1; i++) {
-    //grid.pop();
+  if(frameCount%4 == 0) {
+    for (let i = 1; i < cols - 1; i++) {
+      //grid.pop();
+    }
+    cols -= 1;
   }
-  cols -= 1;
-}
 
-  grid[199-wallX][22] = 1;
+  grid[cols-4][22] = 1;
+
+  
   background(0);
 
   // 波の更新
@@ -211,7 +226,7 @@ function draw() {
       grid[i][j] = nextGrid[i][j];
 
       // 描画
-      let c = map((grid[i][j]), -1, 1, 0, 255);
+      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
       let ct = map(1-transmission[i][j] -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
       fill(c, c, ct);
