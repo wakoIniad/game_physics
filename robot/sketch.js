@@ -129,7 +129,7 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = (grid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = (nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
       let midFreq = grid[i][j] - lowFreq; // 中周波（補間成分）
 
@@ -148,12 +148,12 @@ function draw() {
       //  attenuatedMid *= scale_;
       //  attenuatedHigh *= scale_;
       //}
-      const s = attenuatedLow + attenuatedMid + attenuatedHigh;
+      /*const s = attenuatedLow + attenuatedMid + attenuatedHigh;
       if(nextGrid[i][j] > 0 && (absorption[2] || absorption[0]))
         { 
           console.log((s)/
       nextGrid[i][j]);
-      }
+      }*/
       // 吸収後の値を反映
       nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
@@ -174,7 +174,7 @@ function draw() {
         fill(c,c,c3)
       } else {
         
-      fill(c)
+      //fill(c)
       }
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
