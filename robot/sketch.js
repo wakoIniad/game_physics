@@ -120,13 +120,42 @@ function draw() {
       // 減衰を適用
       nextGrid[i][j] *= damping[i][j];
 
+// 0.6c + 0.4p
+// 1c - 0.4c - 0.6p = 0.6c - 0.6p
+// 0c + 1p
+// 
+
+//a(low)
+// ・a・c + (1-a)・p
+// b(high)
+// ・1c - b・c - (1-b)・p = (1-b)・c - (1- b)・p
+// a・c + (1-a)・p -  ( (1-b)・c - (1- b)・p )
+// ・= a・c + (1-a)・p - (1-b)・c + (1- b)・p
+// = low - high
+
+/**
+ * high + low + low - high = 2low
+ * 
+ * high + low + high - low = 2high
+ * 
+ * low/2 + high - low/2 + high/2 = high
+ * 
+ * low + (X - low) + low - X + low = high
+ */
+
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.6)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = highPassFilter(nextGrid[i][j], grid[i][j], prevGrid[i][j], 0.4);
-      let midFreq = lowFreq - highFreq; // 中周波（補間成分）
+      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.4)/2//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = nextGrid[i][j] - lowFreq;
+      let midFreq = (lowFreq - highFreq)/2; // 中周波（補間成分）
+      // 1,1 : 1, 0, 1
+      // 1,0 : 0.5, 1, -0.5
+      // -1,1: 0, -2, 2
+      //-1 
+      // 30hz 60hz 120hz
+      // 
 
       // 吸収を適用
       let attenuatedLow = lowFreq * (1 - absorption[0]); // 低周波の減衰
