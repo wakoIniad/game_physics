@@ -17,9 +17,9 @@ let materialType = [];
 
 
 let materialAbsorption = {
-  "none": [1, 1, 1],
-  "test1": [0, 1, 1],//増減が激しいとカット
-  "test2": [1, 1, 0],//増減が少ないとかっと
+  "none": [0, 0, 0],
+  "test1": [0, 0, 0.6],//増減が激しいとカット
+  "test2": [0.6, 0, 0],//増減が少ないとかっと
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
@@ -122,9 +122,16 @@ function draw() {
       const velocity = nextGrid[i][j] - grid[i][j];
       nextGrid[i][j] -= damping[i][j] * (velocity);
 
+
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
+      const smoothingFactor = absorption[0];
+      nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
+
+      let d = 1.0 - absorption[2] * Math.abs(velocity);
+      nextGrid[i][j] = nextGrid[i][j] * d;
+
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
@@ -154,13 +161,13 @@ function draw() {
       const s = attenuatedLow + attenuatedMid + attenuatedHigh;
       if(nextGrid[i][j] > 0 && !(absorption[2] && absorption[0]))
         { 
-          console.log((s)/
-      nextGrid[i][j]
-      , attenuatedLow, attenuatedMid, attenuatedHigh
-    );
+    //      console.log((s)/
+   //   nextGrid[i][j]
+   //   , attenuatedLow, attenuatedMid, attenuatedHigh
+   // );
       }
       // 吸収後の値を反映
-      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
