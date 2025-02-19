@@ -89,8 +89,8 @@ function setup() {
     }
   }
   function t2(x,t) {
-    test2(x+0,20,x+40,0,"test1",0);
-    test2(x+0,30,x+40,50,"test2",0);
+    test2(x+0,20,x+40,0,"test1",1);
+    test2(x+0,30,x+40,50,"test2",1);
   }
   t2(20,"test1");
   t2(80,"test2");
@@ -141,7 +141,7 @@ function drawF() {
   //grid[cols-4][22] = 1;
 
   
-  background(0);
+  background(0,200);
 
   // 波の更新
   for (let i = 1; i < cols - 1; i++) {
