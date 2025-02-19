@@ -84,8 +84,8 @@ function lowPassFilter(currentValue, previousFilteredValue, a) {
   return a * currentValue + (1 - a) * previousFilteredValue;
 }
 
-function highPassFilter(currentValue, previousInputValue, previousLowPassValue, a) {
-  let lowPassValue = lowPassFilter(currentValue, previousLowPassValue, a);
+function highPassFilter(currentValue, previousInputValue, previousLowPassValue, b) {
+  let lowPassValue = lowPassFilter(previousInputValue, previousLowPassValue, b);
   return currentValue - lowPassValue;
 }
 
@@ -124,9 +124,9 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let midFreq = grid[i][j] - lowFreq; // 中周波（補間成分）
-      let highFreq = nextGrid[i][j] - grid[i][j];
+      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.6)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = highPassFilter(nextGrid[i][j], grid[i][j], prevGrid[i][j], 0.4);
+      let midFreq = lowFreq - highFreq; // 中周波（補間成分）
 
       // 吸収を適用
       let attenuatedLow = lowFreq * (1 - absorption[0]); // 低周波の減衰
