@@ -18,8 +18,8 @@ let materialType = [];
 
 let materialAbsorption = {
   "none": [0, 0, 0],
-  "test1": [0, 1, 1],//増減が激しいとカット
-  "test2": [0.9, 0, 0],//増減が少ないとかっと
+  "test1": [0, 0, 1],//増減が激しいとカット
+  "test2": [1, 0, 0],//増減が少ないとかっと
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
@@ -66,11 +66,12 @@ function setup() {
       let x = ~~(Math.sin(i)*r) + 120
       let y = ~~(Math.cos(i)*r) + 120
       
-      waveSpeed[x][y]   = 0.5;
-      waveSpeed[x][y+1] = 0.5;
-      waveSpeed[x][y-1] = 0.5;
-      waveSpeed[x+1][y] = 0.5;
-      waveSpeed[x-1][y] = 0.5;
+      waveSpeed[x][y]   = 0.1;
+      waveSpeed[x][y+1] = 0.1;
+      waveSpeed[x][y-1] = 0.1;
+      waveSpeed[x+1][y] = 0.1;
+      waveSpeed[x-1][y] = 0.1;
+//      materialType[x][y]   = "test1";
     }
   }
   
@@ -85,11 +86,12 @@ function setup() {
       let x = ~~(Math.sin(i)*r) + 50
       let y = ~~(Math.cos(i)*r) + 50
       
-      waveSpeed[x][y]   = 0.5;
-      waveSpeed[x][y+1] = 0.5;
-      waveSpeed[x][y-1] = 0.5;
-      waveSpeed[x+1][y] = 0.5;
-      waveSpeed[x-1][y] = 0.5;
+      waveSpeed[x][y]   = 0.1;
+      waveSpeed[x][y+1] = 0.1;
+      waveSpeed[x][y-1] = 0.1;
+      waveSpeed[x+1][y] = 0.1;
+      waveSpeed[x-1][y] = 0.1;
+//      materialType[x][y]   = "test2";
     }
   }
 }
@@ -168,15 +170,15 @@ function draw() {
       grid[i][j] = nextGrid[i][j];
 
       // 描画
-      let c = map(Math.abs(grid[i][j]), 0, 10, 0, 255);
-      let c2 = map(1-transmission[i][j] -1, 1, 0, 255);
-      let c3 = map(waveSpeed[i][j], 0, 0.5, 0, 255);
-      fill(c3, c, c2);
+      let c = map(grid[i][j], -1, 1, 0, 255);
+      let ct = map(1-transmission[i][j] -1, 1, 0, 255);
+      let cw = map(waveSpeed[i][j], 0, 0.5, 0, 255);
+      fill(c, c, ct);
       if(materialType[i][j].startsWith("test")) {
-        fill(c,c,c3)
+        fill(c,c,cw)
       } else {
         
-        fill(c)
+        fill(c);
       }
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
@@ -188,7 +190,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      grid[x][y] = 10;
+      grid[x][y] = 1;
     }
   }
   if(keyIsPressed) {
