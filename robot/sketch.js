@@ -80,6 +80,15 @@ function setup() {
   test(+50,+50,"test2",0.5);//増減が少ないとカット
 }
 
+function lowPassFilter(currentValue, previousFilteredValue, a) {
+  return a * currentValue + (1 - a) * previousFilteredValue;
+}
+
+function highPassFilter(currentValue, previousInputValue, previousLowPassValue, a) {
+  let lowPassValue = lowPassFilter(currentValue, previousLowPassValue, a);
+  return currentValue - lowPassValue;
+}
+
 function draw() {
   background(0);
 
@@ -115,9 +124,9 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = (nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = nextGrid[i][j] - grid[i][j];
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let midFreq = grid[i][j] - lowFreq; // 中周波（補間成分）
+      let highFreq = nextGrid[i][j] - grid[i][j];
 
       // 吸収を適用
       let attenuatedLow = lowFreq * (1 - absorption[0]); // 低周波の減衰
@@ -154,7 +163,7 @@ function draw() {
       grid[i][j] = nextGrid[i][j];
 
       // 描画
-      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
+      let c = map((grid[i][j]), -1, 1, 0, 255);
       let ct = map(1-transmission[i][j] -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
       fill(c, c, ct);
@@ -178,7 +187,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      grid[x][y] = 2;
+      grid[x][y] = 1;
     }
   }
   if(keyIsPressed) {
