@@ -25,7 +25,7 @@ let materialAbsorption = {
 };
 
 function setup() {
-  createCanvas(400, 200);
+  createCanvas(400, 100);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -52,6 +52,18 @@ function setup() {
       materialType[i][j] = defaultMaterialType;
     }
   }
+  function test2(x,y,dx,dy,material) {
+    const mx = Math.min(x,dx);
+    const MX = Math.max(x,dx);
+    const my = Math.min(y,dy);
+    const MY = Math.max(y,dy);
+    let xx = MX-mx;
+    let yy = MY-my;
+    const M = Math.max(xx,yy);
+    for(let i = 0;i < M;i++) {
+      materialType[~~(mx+xx*(i/M))][~~(my+yy*(i/M))] = material;
+    }
+  }
   function test(posX,posY,material,speed) {
   //テスト用の障害物
     for(let i = 0;i < 2*Math.PI;i+=0.01) {
@@ -75,10 +87,12 @@ function setup() {
       }
     }
   }
-  test(-50,-50,"test1",0.1);//増減が激しいとカット
-  test(-50,+50,"test1",0.5);//増減が激しいとカット
-  test(+50,-50,"test2",0.1);//増減が少ないとカット 
-  test(+50,+50,"test2",0.5);//増減が少ないとカット
+  test2(20,20,60,0,"test1");
+  //test2(20,30,60,50,"test1");
+  //test(-50,-50,"test1",0.1);//増減が激しいとカット
+  //test(-50,+50,"test1",0.5);//増減が激しいとカット
+  //test(+50,-50,"test2",0.1);//増減が少ないとカット 
+  //test(+50,+50,"test2",0.5);//増減が少ないとカット
 }
 
 function lowPassFilter(currentValue, previousFilteredValue, a) {
@@ -218,11 +232,11 @@ function draw() {
       transmission[x-1][y] = 1;
 
       
-      materialType[x][y]   = "none2";
-      materialType[x][y+1] = "none2";
-      materialType[x][y-1] = "none2";
-      materialType[x+1][y] = "none2";
-      materialType[x-1][y] = "none2";
+      materialType[x][y]   = "test1";
+      materialType[x][y+1] = "test1";
+      materialType[x][y-1] = "test1";
+      materialType[x+1][y] = "test1";
+      materialType[x-1][y] = "test1";
     }
   }
 }
