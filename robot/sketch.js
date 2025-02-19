@@ -5,7 +5,7 @@ let nextGrid = [];
 
 let resolution = 2; // セルの大きさ
 
-const defaultDamping = 1; // 減衰率
+const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 0.2;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
@@ -59,7 +59,8 @@ function setup() {
       let y = ~~(Math.cos(i)*20) + rows/2 + posY
 
 
-      materialType[x][y]   = material;
+      //materialType[x][y]   = material;
+      damping[x][y] = 1;
     }
     for(let r = 0;r < 50;r++) {
       for(let i = 0;i < 2*Math.PI;i+=0.05) {
@@ -97,8 +98,8 @@ function draw() {
     for (let j = 1; j < rows - 1; j++) {
       
       // 波動方程式の離散化（差分法）
-      nextGrid[i][j] = 
-        2 * grid[i][j] - prevGrid[i][j] +
+      nextGrid[i][j]= 
+        (2 * grid[i][j] - prevGrid[i][j] +
         waveSpeed[i][j] * (
           grid[i+1][j] * transmission[i+1][j] + 
           grid[i-1][j] * transmission[i-1][j] +
@@ -115,10 +116,11 @@ function draw() {
             //+ (transmission[i+1][j+1] + transmission[i-1][j-1] + 
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
-        );
+        ) + damping[i][j] * grid[i][j])/(1+damping[i][j]);
 
       // 減衰を適用
-      nextGrid[i][j] *= damping[i][j];
+      //nextGrid[i][j] -= damping[i][j] * (nextGrid[i][j] - grid[i][j]);
+//      nextGrid[i][j] *= damping[i][j] * (grid[i][j] - prevGrid[i][j]);
 
 // 0.6c + 0.4p
 // 1c - 0.4c - 0.6p = 0.6c - 0.6p
@@ -147,9 +149,9 @@ function draw() {
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.4)/2//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = nextGrid[i][j] - lowFreq;
-      let midFreq = (lowFreq - highFreq)/2; // 中周波（補間成分）
+      let lowFreq = lowPassFilter(grid[i][j], prevGrid[i][j], 0.4)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = nextGrid[i][j] - grid[i][j];
+      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       // 1,1 : 1, 0, 1
       // 1,0 : 0.5, 1, -0.5
       // -1,1: 0, -2, 2
@@ -181,7 +183,7 @@ function draw() {
     );
       }
       // 吸収後の値を反映
-      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
