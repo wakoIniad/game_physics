@@ -59,18 +59,18 @@ function setup() {
     let y = ~~(Math.cos(i)*20) + 120
     
     
-    materialType[x][y]   = "test2";
+    materialType[x][y]   = "test1";
   }
   for(let r = 0;r < 50;r++) {
     for(let i = 0;i < 2*Math.PI;i+=0.05) {
       let x = ~~(Math.sin(i)*r) + 120
       let y = ~~(Math.cos(i)*r) + 120
       
-      waveSpeed[x][y]   = 0.1;
-      waveSpeed[x][y+1] = 0.1;
-      waveSpeed[x][y-1] = 0.1;
-      waveSpeed[x+1][y] = 0.1;
-      waveSpeed[x-1][y] = 0.1;
+      waveSpeed[x][y]   = 0.4;
+      waveSpeed[x][y+1] = 0.4;
+      waveSpeed[x][y-1] = 0.4;
+      waveSpeed[x+1][y] = 0.4;
+      waveSpeed[x-1][y] = 0.4;
     }
   }
   
@@ -85,11 +85,11 @@ function setup() {
       let x = ~~(Math.sin(i)*r) + 50
       let y = ~~(Math.cos(i)*r) + 50
       
-      waveSpeed[x][y]   = 0.5;
-      waveSpeed[x][y+1] = 0.5;
-      waveSpeed[x][y-1] = 0.5;
-      waveSpeed[x+1][y] = 0.5;
-      waveSpeed[x-1][y] = 0.5;
+      waveSpeed[x][y]   = 0.4;
+      waveSpeed[x][y+1] = 0.4;
+      waveSpeed[x][y-1] = 0.4;
+      waveSpeed[x+1][y] = 0.4;
+      waveSpeed[x-1][y] = 0.4;
     }
   }
 }
@@ -148,12 +148,12 @@ function draw() {
       //  attenuatedMid *= scale_;
       //  attenuatedHigh *= scale_;
       //}
-      /*const s = attenuatedLow + attenuatedMid + attenuatedHigh;
+      const s = attenuatedLow + attenuatedMid + attenuatedHigh;
       if(nextGrid[i][j] > 0 && (absorption[2] || absorption[0]))
         { 
           console.log((s)/
       nextGrid[i][j]);
-      }*/
+      }
       // 吸収後の値を反映
       nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
@@ -174,7 +174,7 @@ function draw() {
         fill(c,c,c3)
       } else {
         
-      //fill(c)
+        fill(c)
       }
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
@@ -186,7 +186,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      grid[x][y] = 1;
+      grid[x][y] = 2;
     }
   }
   if(keyIsPressed) {
