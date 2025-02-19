@@ -20,6 +20,7 @@ let materialAbsorption = {
   "none": [0, 0, 0],
   "test1": [0, 0, 0.6],//増減が激しいとカット
   "test2": [0.6, 0, 0],//増減が少ないとかっと
+  "test3": [0,0,0],
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
@@ -52,12 +53,13 @@ function setup() {
       materialType[i][j] = defaultMaterialType;
     }
   }
-  function test2(x,y,dx,dy,material) {
+  function test2(x,y,dx,dy,material,tr=1) {
     let xx = x - dx;
     let yy = y - dy;
     const M = Math.max(Math.abs(xx),Math.abs(yy));
     for(let i = 0;i < M;i++) {
       materialType[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = material;
+      transmission[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = tr
     }
   }
   function test(posX,posY,material,speed) {
@@ -83,8 +85,11 @@ function setup() {
       }
     }
   }
-  test2(20,20,60,0,"test1");
-  test2(20,30,60,50,"test1");
+  function t2(x) {
+    test2(x+0,20,x+40,0,"test3",0);
+    test2(x+0,30,x+40,50,"test3",0);
+  }
+  t2(20);
   //test(-50,-50,"test1",0.1);//増減が激しいとカット
   //test(-50,+50,"test1",0.5);//増減が激しいとカット
   //test(+50,-50,"test2",0.1);//増減が少ないとカット 
