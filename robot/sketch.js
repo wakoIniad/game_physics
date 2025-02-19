@@ -38,7 +38,7 @@ function test2(x,y,dx,dy,material,tr=1) {
 
 function setup() {
   frameRate(60);
-  createCanvas(400, 100);
+  createCanvas(400, 40);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -89,11 +89,14 @@ function setup() {
     }
   }
   function t2(x,t) {
-    test2(x+0,20,x+40,0,"test1",1);
-    test2(x+0,30,x+40,50,"test2",1);
+    test2(x+0,rows/2-5,x+40,0,"test1",1);
+    test2(x+0,rows/2+5,x+40,rows,"test2",1);
   }
-  t2(20,"test1");
-  t2(80,"test2");
+  for(var i = 0;i < cols/40-1; i++) {
+    t2(i*40)
+  }
+  //t2(20,"test1");
+  //t2(80,"test2");
   //t2(100);
   //t2(140);
   //t2(200);
@@ -104,6 +107,15 @@ function setup() {
   //test(-50,+50,"test1",0.5);//増減が激しいとカット
   //test(+50,-50,"test2",0.1);//増減が少ないとカット 
   //test(+50,+50,"test2",0.5);//増減が少ないとカット
+
+  
+  for(let i = 1;i < rows -1;i++) {
+    //点で放出しないようにする
+    damping[0][i] = 1;
+    damping[1][i] = 0.5;
+    damping[2][i] = 0.25;
+    damping[3][i] = 0.125;
+  }
 }
 
 function lowPassFilter(currentValue, previousFilteredValue, a) {
@@ -114,12 +126,15 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
   let lowPassValue = lowPassFilter(previousInputValue, previousLowPassValue, b);
   return currentValue - lowPassValue;
 }
+let sum_damage = 0;
 function draw() {
 
   for(var i = 0;i < 1;i++) {
     drawF();
   }
 }
+let rnd = Math.random()*1;
+let rnd2;
 function drawF() {
   const wallX = (~~(frameCount/4));
   //test2(199-wallX,0,199-wallX,50,"test3",0);
@@ -127,16 +142,22 @@ function drawF() {
   //test2(197-wallX,0,197-wallX,50,"test3",0.2);
   //test2(196-wallX,0,196-wallX,50,"test3",0.4);
   //test2(195-wallX,0,195-wallX,50,"test3",0.8);
+  if(frameCount%32 == 0) {
+    rnd = Math.random()*2;
+    rnd2 = 2+(~~(Math.random()*3));
+  }
   if(frameCount%4 == 0) {
     for (let i = 1; i < cols - 1; i++) {
       //grid.pop();
     }
-    cols -= 1;
+   // cols -= 1;
   }
-  for(let i = 1;i < rows -1;i++) {
-    //点で放出しないようにする
-    grid[cols-1][i] = 1;
-  }
+  if(frameCount % rnd2 == 0) {
+    for(let i = 1;i < rows -1;i++) {
+      //点で放出しないようにする
+      grid[cols-1][i] = rnd;
+    }
+ }
 
   //grid[cols-4][22] = 1;
 
@@ -170,19 +191,22 @@ function drawF() {
 
       // 減衰を適用
       const velocity = nextGrid[i][j] - grid[i][j];
+      if(i <= 3) {
+        sum_damage += Math.abs(damping[i][j] * (velocity));
+      }
       nextGrid[i][j] -= damping[i][j] * (velocity);
 
 
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
-      const smoothingFactor = absorption[0];
-      nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
+      //const smoothingFactor = absorption[0];
+      //nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
 //if(velocity)      console.log(velocity)
-      let d = 1.0 - absorption[2] * Math.abs(velocity);
+      //let d = 1.0 - absorption[2] * Math.abs(velocity);
       //let d2 = absorption[2] * velocity;
-      nextGrid[i][j] = nextGrid[i][j] * d;
+      //nextGrid[i][j] = nextGrid[i][j] * d;
       //nextGrid[i][j] = nextGrid[i][j] - d2;
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
@@ -276,4 +300,5 @@ function drawF() {
       materialType[x-1][y] = "test1";
     }
   }
+  console.log(sum_damage)
 }
