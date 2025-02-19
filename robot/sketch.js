@@ -6,7 +6,7 @@ let nextGrid = [];
 let resolution = 2; // セルの大きさ
 
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 0.2;  // 波の伝搬速度(1未満)
+const defaultWaveSpeed = 0.4;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -109,7 +109,19 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
 
 function draw() {
   const wallX = (~~(frameCount/16));
-  test2(199-wallX,0,199-wallX,50,"test3",0);
+  //test2(199-wallX,0,199-wallX,50,"test3",0);
+  //test2(198-wallX,0,198-wallX,50,"test3",0.15);
+  //test2(197-wallX,0,197-wallX,50,"test3",0.2);
+  //test2(196-wallX,0,196-wallX,50,"test3",0.4);
+  //test2(195-wallX,0,195-wallX,50,"test3",0.8);
+  if(frameCount%16 == 0) {
+  for (let i = 1; i < cols - 1; i++) {
+    //grid.pop();
+  }
+  cols -= 1;
+}
+
+  grid[199-wallX][22] = 1;
   background(0);
 
   // 波の更新
@@ -223,6 +235,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
+      console.log(x,y)
       grid[x][y] = 2;
     }
   }
