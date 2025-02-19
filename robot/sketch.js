@@ -143,8 +143,8 @@ function drawF() {
   //test2(196-wallX,0,196-wallX,50,"test3",0.4);
   //test2(195-wallX,0,195-wallX,50,"test3",0.8);
   if(frameCount%32 == 0) {
-    rnd = Math.random()*2;
-    rnd2 = 2+(~~(Math.random()*3));
+    rnd = 1||Math.random()*2;
+    rnd2 = 4||2+(~~(Math.random()*3));
   }
   if(frameCount%4 == 0) {
     for (let i = 1; i < cols - 1; i++) {
