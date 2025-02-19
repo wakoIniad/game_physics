@@ -25,7 +25,7 @@ let materialAbsorption = {
 };
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(400, 200);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -130,10 +130,10 @@ function draw() {
       nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
 //if(velocity)      console.log(velocity)
-      //let d = 1.0 - absorption[2] * Math.abs(velocity);
-      let d2 = absorption[2] * velocity;
-      //nextGrid[i][j] = nextGrid[i][j] * d;
-      nextGrid[i][j] = nextGrid[i][j] - d2;
+      let d = 1.0 - absorption[2] * Math.abs(velocity);
+      //let d2 = absorption[2] * velocity;
+      nextGrid[i][j] = nextGrid[i][j] * d;
+      //nextGrid[i][j] = nextGrid[i][j] - d2;
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
@@ -204,7 +204,7 @@ function draw() {
     let x = floor(mouseX / resolution);
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      grid[x][y] = 1;
+      grid[x][y] = 2;
     }
   }
   if(keyIsPressed) {
