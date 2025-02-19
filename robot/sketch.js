@@ -98,8 +98,8 @@ function draw() {
     for (let j = 1; j < rows - 1; j++) {
       
       // 波動方程式の離散化（差分法）
-      nextGrid[i][j]= 
-        (2 * grid[i][j] - prevGrid[i][j] +
+      nextGrid[i][j] = 
+        2 * grid[i][j] - prevGrid[i][j] +
         waveSpeed[i][j] * (
           grid[i+1][j] * transmission[i+1][j] + 
           grid[i-1][j] * transmission[i-1][j] +
@@ -116,10 +116,10 @@ function draw() {
             //+ (transmission[i+1][j+1] + transmission[i-1][j-1] + 
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
-        ) + damping[i][j] * grid[i][j])/(1+damping[i][j]);
+        ) ;
 
       // 減衰を適用
-      //nextGrid[i][j] -= damping[i][j] * (nextGrid[i][j] - grid[i][j]);
+      nextGrid[i][j] -= damping[i][j] * (nextGrid[i][j] - grid[i][j]);
 //      nextGrid[i][j] *= damping[i][j] * (grid[i][j] - prevGrid[i][j]);
 
 // 0.6c + 0.4p
