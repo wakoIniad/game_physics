@@ -305,11 +305,24 @@ function drawF() {
       let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
 
       // sum = x + y + x - y - y/2 - z/2 = 2x -y/2 - z/2
+      
+      0, 0.5 1
+      l 0.75
+      m 0.5
+      h 0.5
+
+      0, 0.25 0.5
+      l 0.375
+      m 0.0.25
+      h 0.5
+
 
        
-      let lowFreq = (x+y)/2;
+      let lowFreq = (y+z)/2;
       let highFreq = (x - y);
       let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+
+      //1.5x - y/2
 
       */
      //変化が小さくなる→ローパスに良く反応する
@@ -335,26 +348,11 @@ function drawF() {
       let attenuatedMid = midFreq   * (1-absorption[1]); // 中周波の減衰
       let attenuatedHigh = highFreq * (1-absorption[2]); // 高周波の減衰
 
-      // 吸収後のエネルギーを計算
-      let totalEnergy = Math.abs(lowFreq) + Math.abs(midFreq) + Math.abs(highFreq);
-      let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
-      // エネルギーが増えないようにスケール補正
-      if (newEnergy > totalEnergy && newEnergy > 0) {
-        let scale_ = totalEnergy / newEnergy;
-        attenuatedLow *= scale_;
-        attenuatedMid *= scale_;
-        attenuatedHigh *= scale_;
-      }
-      const s = attenuatedLow + attenuatedMid + attenuatedHigh;
-      if(nextGrid[i][j] > 0 && !(absorption[2] && absorption[0]))
-        { 
-    //      console.log((s)/
-   //   nextGrid[i][j]
-   //   , attenuatedLow, attenuatedMid, attenuatedHigh
-   // );
-      }
+      //これによってabsorption0で足し合わせたときにnextGrid[i][j]だけが残る必要がなくなる
+      let ratio = (lowFreq + midFreq + highFreq)/nextGrid[i][j];
+
       // 吸収後の値を反映
-      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      nextGrid[i][j] = (attenuatedLow + attenuatedMid + attenuatedHigh)/ratio;
     }
   }
 
