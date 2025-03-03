@@ -10,7 +10,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.001//0001;
 let time = 0;
-let lambda = 5;//0.3と3
+let lambda = 0.5;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -223,9 +223,13 @@ function drawF() {
   for(let i = -5;i < 5 ;i++) {
     for(let j = 1;j < rows -1;j++) {
       const offset = (lambda/i*dx)*2*Math.PI
-   prevGrid[cols/2+i][j] =  testAmp*Math.sin(offset + 2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols/2+i][j] =      testAmp*Math.sin(offset + 2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   //prevGrid[cols/2+i][j] =  testAmp*Math.sin(offset + 2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   //grid[cols/2+i][j] =      testAmp*Math.sin(offset + 2 * Math.PI * time/(lambda/defaultWaveSpeed));
    //prevGrid[cols/2][rows/2] = 1.0;
+   prevGrid[cols/2][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols/2][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   //prevGrid[cols/2][rows/2] = 1.0;
+   
     }
   }
 
@@ -294,6 +298,20 @@ const centralDiffY = (
 
 nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
     gamma2 * (centralDiffX + centralDiffY);
+         // 6次の中央差分を計算
+// const centralDiffX = (
+//  -grid[i+3][j] + 18 * grid[i+2][j] - 27 * grid[i+1][j] +
+//  12 * grid[i][j] - 27 * grid[i-1][j] + 18 * grid[i-2][j] -
+//  grid[i-3][j]
+//) / 90;
+//const centralDiffY = (
+//  -grid[i][j+3] + 18 * grid[i][j+2] - 27 * grid[i][j+1] +
+//  12 * grid[i][j] - 27 * grid[i][j-1] + 18 * grid[i][j-2] -
+//  grid[i][j-3]
+//) / 90;
+//
+//nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
+//    gamma2 * (centralDiffX + centralDiffY);
 
 
       // 減衰を適用
