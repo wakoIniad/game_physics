@@ -278,19 +278,21 @@ function drawF() {
       grid[i + 2][j + 4] + grid[i + 2][j - 4] + grid[i - 2][j + 4] + grid[i - 2][j - 4] -
       30 * grid[i][j]
   );*/
-  const centralDiffX = (
-    -grid[i+2][j] + 16 * grid[i+1][j] - 30 * grid[i][j] +
-    16 * grid[i-1][j] - grid[i-2][j]
-) / 12;
-
+ // 6次の中央差分を計算
+ const centralDiffX = (
+  -grid[i+3][j] + 18 * grid[i+2][j] - 27 * grid[i+1][j] +
+  12 * grid[i][j] - 27 * grid[i-1][j] + 18 * grid[i-2][j] -
+  grid[i-3][j]
+) / 90;
 
 const centralDiffY = (
-    -grid[i][j+2] + 16 * grid[i][j+1] - 30 * grid[i][j] +
-    16 * grid[i][j-1] - grid[i][j-2]
-) / 12;
+  -grid[i][j+3] + 18 * grid[i][j+2] - 27 * grid[i][j+1] +
+  12 * grid[i][j] - 27 * grid[i][j-1] + 18 * grid[i][j-2] -
+  grid[i][j-3]
+) / 90;
 
 nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
-    gamma2 * (centralDiffX + centralDiffY);
+  gamma2 * (centralDiffX + centralDiffY);
 
 
       // 減衰を適用
