@@ -143,7 +143,7 @@ function setup() {
     const x = ~~(cols*1/3+px);
     for(let i = 1;i <= absw; i++) {
       const c = (1/1.5)**(absw-i);
-      test2(x+i,0,x+i,rows+1,`test2-${i}`,defaultTransmission,c*0.5);
+      test2(x+i,0,x+i,rows+1,`test2-${i}`,defaultTransmission,/*c*0.2*/);
     }
   }
   
