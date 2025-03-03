@@ -328,7 +328,7 @@ function drawF() {
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]))/2;
+      let highFreq = ((nextGrid[i][j] - grid[i][j]));
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
@@ -350,7 +350,7 @@ function drawF() {
 
       //これによってabsorption0で足し合わせたときにnextGrid[i][j]だけが残る必要がなくなる
       //代わりに、正の数の範囲内の変化なら各値も正の数、負の数の数の変化ないなら負の数に"おおむね"なる必要がある。
-      let ratio = (lowFreq + midFreq + highFreq+0.000001)/(nextGrid[i][j]+0.000001);
+      let ratio = (lowFreq + midFreq + highFreq+Number.MIN_VALUE)/(nextGrid[i][j]+Number.MIN_VALUE);
 
       // 吸収後の値を反映
       nextGrid[i][j] = (attenuatedLow + attenuatedMid + attenuatedHigh)/ratio;
