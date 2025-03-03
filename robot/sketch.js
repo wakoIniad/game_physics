@@ -46,8 +46,8 @@ function makeSettingABSW(key,template) {
     console.log(`test${key}-${i}`,template.map(a=>a*c));
   }
 }
-makeSettingABSW(1,[0, 0, 0.1]);
-makeSettingABSW(2,[0.1, 0, 0]);
+makeSettingABSW(1,[0, 0, 0.3]);
+makeSettingABSW(2,[0.3, 0, 0]);
 
 
 function test2(x,y,dx,dy,material,tr=1) {
@@ -129,9 +129,11 @@ function setup() {
     damping[cols/2+1][i] = 0.5;
     damping[cols/2+2][i] = 0.25;
     damping[cols/2+3][i] = 0.125;
+    damping[cols/2-4][i] = 0.0625;
     damping[cols/2-1][i] = 0.5;
     damping[cols/2-2][i] = 0.25;
     damping[cols/2-3][i] = 0.125;
+    damping[cols/2-4][i] = 0.0625;
   }
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*1/3+px);
@@ -174,12 +176,13 @@ function draw() {
     
       let c = map(Math.abs(grid[i][j]), 0, testAmp, 0, 255);
       let ct = map(1-transmission[i][j], -1, 1, 0, 255);
+      let cd = map(damping[i][j], -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
       if(!isFinite(grid[i][j])) {
         console.error(grid[i][j])
       }
       const ab = materialAbsorption[materialType[i][j]]
-      fill(c, c, -1);
+      fill(c, cd, cd);
       if(materialType[i][j].startsWith("test")) {
       fill(...ab.map(a=>a*255     *5    +c))
       //} else {
