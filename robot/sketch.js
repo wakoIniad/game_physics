@@ -7,19 +7,12 @@ let nextGrid = [];
 let resolution = 2; // セルの大きさ
 
 //discreat param
-//var dx = 0.1;
-//var dt = 0.0008//0.0005//0.0001;;
-//let time = 0;
-//let lambda = 2.2;//0.3と2.3//0.3と3
-//let testAmp = 1;//いったんここ１で固定する
-//let calcCount = Math.max(1,0.05/dt);
-
 var dx = 0.1;
-var dt = 0.0001;//0.0005//0.0008;
+var dt = 0.0008//0.0005//0.0008;
 let time = 0;
 let lambda = .3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
-let calcCount = Math.max(1,0.01/dt);//0.05
+let calcCount = Math.max(1,0.05/dt);
 const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 50//5//10;  
 const defaultTransmission = 1; // 透過率 
@@ -53,10 +46,8 @@ function makeSettingABSW(key,template) {
     console.log(`test${key}-${i}`,template.map(a=>a*c));
   }
 }
-//makeSettingABSW(1,[0, 0, 0.3]);
-//makeSettingABSW(2,[0.3, 0, 0]);
-makeSettingABSW(1,[0, 0, 0.1]);
-makeSettingABSW(2,[0.1, 0, 0]);
+makeSettingABSW(1,[0, 0, 0.3]);
+makeSettingABSW(2,[0.3, 0, 0]);
 
 
 function test2(x,y,dx,dy,material,tr=1) {
@@ -71,7 +62,7 @@ function test2(x,y,dx,dy,material,tr=1) {
 
 function setup() {
   frameRate(60);
-  createCanvas(1200, 40);
+  createCanvas(1200, 120);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -147,14 +138,14 @@ function setup() {
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*1/3+px);
     for(let i = 1;i <= absw; i++) {
-      test2(x+i,0,x+i,rows,`test2-${i}`,defaultTransmission);
+      test2(x-i,0,x-i,rows+1,`test2-${i}`,defaultTransmission);
     }
   }
   
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*2/3+px);
     for(let i = 1;i <= absw; i++) {
-      test2(x-i,0,x-i,rows,`test1-${i}`,defaultTransmission);
+      test2(x+i,0,x+i,rows+1,`test1-${i}`,defaultTransmission);
     }
   }
 }
@@ -273,7 +264,7 @@ function drawF() {
       
       const gamma2 = Math.pow(waveSpeed[i][j]*dt/dx, 2);
       // 波動方程式の離散化（差分法）
-      nextGrid[i][j] = 
+      /*nextGrid[i][j] = 
         2 * grid[i][j] - prevGrid[i][j] +
         gamma2 * (
           grid[i+1][j] * transmission[i+1][j] + 
@@ -291,7 +282,7 @@ function drawF() {
             //+ (transmission[i+1][j+1] + transmission[i-1][j-1] + 
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
-        ) ;
+        ) ;*/
         /*nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
           grid[i + 2][j] + grid[i - 2][j] + grid[i][j + 2] + grid[i][j - 2] +
           grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] - 8 * grid[i][j]
@@ -314,20 +305,34 @@ function drawF() {
       grid[i + 2][j + 4] + grid[i + 2][j - 4] + grid[i - 2][j + 4] + grid[i - 2][j - 4] -
       30 * grid[i][j]
   );*/
-    //const centralDiffX = (
-    //  -grid[i+2][j] + 16 * grid[i+1][j] - 30 * grid[i][j] +
-    //  16 * grid[i-1][j] - grid[i-2][j]
-    //) / 12;
-    //
-    //
-    //const centralDiffY = (
-    //    -grid[i][j+2] + 16 * grid[i][j+1] - 30 * grid[i][j] +
-    //    16 * grid[i][j-1] - grid[i][j-2]
-    //) / 12;
-    //
-    //nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
-    //    gamma2 * (centralDiffX + centralDiffY);
- 
+  const centralDiffX = (
+    -grid[i+2][j] + 16 * grid[i+1][j] - 30 * grid[i][j] +
+    16 * grid[i-1][j] - grid[i-2][j]
+) / 12;
+
+
+const centralDiffY = (
+    -grid[i][j+2] + 16 * grid[i][j+1] - 30 * grid[i][j] +
+    16 * grid[i][j-1] - grid[i][j-2]
+) / 12;
+
+nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
+    gamma2 * (centralDiffX + centralDiffY);
+         // 6次の中央差分を計算
+// const centralDiffX = (
+//  -grid[i+3][j] + 18 * grid[i+2][j] - 27 * grid[i+1][j] +
+//  12 * grid[i][j] - 27 * grid[i-1][j] + 18 * grid[i-2][j] -
+//  grid[i-3][j]
+//) / 90;
+//const centralDiffY = (
+//  -grid[i][j+3] + 18 * grid[i][j+2] - 27 * grid[i][j+1] +
+//  12 * grid[i][j] - 27 * grid[i][j-1] + 18 * grid[i][j-2] -
+//  grid[i][j-3]
+//) / 90;
+//
+//nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
+//    gamma2 * (centralDiffX + centralDiffY);
+
 
       // 減衰を適用
       const velocity = nextGrid[i][j] - grid[i][j];
@@ -428,12 +433,9 @@ function drawF() {
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       const fact = 1000;
-      //let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;   
-      //let highFreq = ((nextGrid[i][j] - grid[i][j]))*2;
-      //let midFreq = (grid[i][j]*2 - lowFreq); // 中周波（補間成分）
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.1;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]));
-      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = ((nextGrid[i][j] - grid[i][j]))*1.5;
+      let midFreq = (grid[i][j]*1.5 - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
       //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
