@@ -9,7 +9,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = .3;//0.3と3
+let lambda = 3;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -61,7 +61,7 @@ function test2(x,y,dx,dy,material,tr=1) {
 
 function setup() {
   frameRate(60);
-  createCanvas(400, 40);
+  createCanvas(800, 40);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -353,7 +353,8 @@ function drawF() {
       */
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.1//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      const fact = 1000;
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.01//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = ((nextGrid[i][j] - grid[i][j]));
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
@@ -376,6 +377,7 @@ function drawF() {
 
       //これによってabsorption0で足し合わせたときにnextGrid[i][j]だけが残る必要がなくなる
       //代わりに、正の数の範囲内の変化なら各値も正の数、負の数の数の変化ないなら負の数に"おおむね"なる必要がある。
+      //また、全て０の時、足し合わせるとnextGrid[i][j]に比例した方が良さそう（？？）
       let ratio = (lowFreq + midFreq + highFreq+Number.MIN_VALUE)/(nextGrid[i][j]+Number.MIN_VALUE);
 
       // 吸収後の値を反映
