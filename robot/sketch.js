@@ -13,7 +13,7 @@ let time = 0;
 let lambda = 2.3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.1/dt);
-const defaultDamping = 0; // 減衰率
+const defaultDamping = 0.001; // 減衰率
 const defaultWaveSpeed = 10;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
@@ -62,7 +62,7 @@ function test2(x,y,dx,dy,material,tr=1) {
 
 function setup() {
   frameRate(60);
-  createCanvas(800, 40);
+  createCanvas(1200, 40);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -131,14 +131,14 @@ function setup() {
     damping[3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
-    const x = ~~(cols*1/4+px);
+    const x = ~~(cols*2/9+px);
     for(let i = 1;i <= absw; i++) {
       test2(x-i,0,x-i,rows,`test2-${i}`,defaultTransmission);
     }
   }
   
   for(let px = 0;px < 1;px++ ){
-    const x = ~~(cols*3/4+px);
+    const x = ~~(cols*7/9+px);
     for(let i = 1;i <= absw; i++) {
       test2(x+i,0,x+i,rows,`test1-${i}`,defaultTransmission);
     }
@@ -154,7 +154,12 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
   return currentValue - lowPassValue;
 }
 let sum_damage = 0;
+let dlambda = 0.001
 function draw() {
+  lambda-=dlambda;
+  if(lambda <= 0.3 || lambda >= 2.3) {
+    dlambda*=-1;
+  }
   if(keyIsPressed) {
     attack();
   }
@@ -167,6 +172,9 @@ function draw() {
       let c = map(Math.abs(grid[i][j]), 0, testAmp, 0, 255);
       let ct = map(1-transmission[i][j], -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
+      if(!isFinite(grid[i][j])) {
+        console.error(grid[i][j])
+      }
       const ab = materialAbsorption[materialType[i][j]]
       fill(c, c, -1);
       if(materialType[i][j].startsWith("test")) {
@@ -222,7 +230,7 @@ function drawF() {
 
   for(let i = -5;i < 5 ;i++) {
     for(let j = 1;j < rows -1;j++) {
-      const offset = (lambda/i*dx)*2*Math.PI
+   //   const offset = (lambda/i*dx)*2*Math.PI
    //prevGrid[cols/2+i][j] =  testAmp*Math.sin(offset + 2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
    //grid[cols/2+i][j] =      testAmp*Math.sin(offset + 2 * Math.PI * time/(lambda/defaultWaveSpeed));
    //prevGrid[cols/2][rows/2] = 1.0;
@@ -440,7 +448,8 @@ nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
       let ratio = (lowFreq + midFreq + highFreq+Number.MIN_VALUE)/(nextGrid[i][j]+Number.MIN_VALUE);
 
       // 吸収後の値を反映
-      nextGrid[i][j] = (attenuatedLow + attenuatedMid + attenuatedHigh)/ratio;
+      const v = (attenuatedLow + attenuatedMid + attenuatedHigh)/ratio;
+      if(v)nextGrid[i][j] = v;
     }
   }
 
