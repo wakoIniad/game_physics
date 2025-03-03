@@ -7,11 +7,11 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.0001;
+var dt = 0.001;
 let time = 0;
 let lambda = 0.5;
 let testAmp = 1;
-let calcCount = 0.001/dt
+let calcCount = Math.max(1,0.001/dt);
 const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 50;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
