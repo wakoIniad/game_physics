@@ -9,7 +9,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = 3;//0.3と3
+let lambda = 0.3;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -274,10 +274,48 @@ function drawF() {
      // let d2 = absorption[2] * velocity;
       //nextGrid[i][j] = nextGrid[i][j] * d;
      // nextGrid[i][j] = nextGrid[i][j] - d2;
+     /**
+      * 
+      let lowFreq = lowPassFilter(x, z, 0.5);
+      let highFreq = (x - y)**(0.1);
+      let midFreq = (y - lowFreq); // 中周波（補間成分）
+
+      
+      let lowFreq = lowPassFilter(x, z, 0.5);
+      let highFreq = (x - y)**(0.1);
+      let midFreq = (x - (high+lowFreq)); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+      
+      
+      let lowFreq = lowPassFilter(x, z, 0.5);
+      let highFreq = (x - y)**(0.1);
+      let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+      // mid: x/2+y/2-y/2-z/2 = x/2-z/2
+      
+      let lowFreq = lowPassFilter(x, z, 0.5);
+      let highFreq = (x - y);
+      let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+      // low: x/2 + z/2
+      // high: x-y
+      // mid: x/2+y/2-y/2-z/2 = x/2-z/2
+      // sum = 2x - y
+
+      
+      let lowFreq = (x+y)/2;
+      let highFreq = (x - y);
+      let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+
+      // sum = x + y + x - y - y/2 - z/2 = 2x -y/2 - z/2
+
+       
+      let lowFreq = (x+y)/2;
+      let highFreq = (x - y);
+      let midFreq = ((x+y)/2 - (y+z)/2); // high と lowの中間部分を求めるため、lowとhighの設定が大事
+
+      */
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]));
+      let highFreq = ((nextGrid[i][j] - grid[i][j]))**(0.1);
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
