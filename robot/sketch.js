@@ -8,13 +8,13 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.00001//0001;
+var dt = 0.01//0001;
 let time = 0;
 let lambda = 0.5;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 5;  
+const defaultWaveSpeed = 0.4;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -220,10 +220,11 @@ function attack() {
 }
 function drawF() {
 
-  for(let i = 1;i < 10 ;i++) {
-    for(let j = 1;j < cols -1;j++) {
-   prevGrid[cols/2][i] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols/2+i][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+  for(let i = -5;i < 5 ;i++) {
+    for(let j = 1;j < rows -1;j++) {
+      const offset = (lambda/i*dx)*2*Math.PI
+   prevGrid[cols/2+i][j] =  testAmp*Math.sin(offset + 2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols/2+i][j] =      testAmp*Math.sin(offset + 2 * Math.PI * time/(lambda/defaultWaveSpeed));
    //prevGrid[cols/2][rows/2] = 1.0;
     }
   }
