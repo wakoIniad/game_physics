@@ -349,6 +349,7 @@ function drawF() {
       let attenuatedHigh = highFreq * (1-absorption[2]); // 高周波の減衰
 
       //これによってabsorption0で足し合わせたときにnextGrid[i][j]だけが残る必要がなくなる
+      //代わりに、正の数の範囲内の変化なら各値も正の数、負の数の数の変化ないなら負の数に"おおむね"なる必要がある。
       let ratio = (lowFreq + midFreq + highFreq)/nextGrid[i][j];
 
       // 吸収後の値を反映
