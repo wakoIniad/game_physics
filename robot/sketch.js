@@ -10,9 +10,9 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0008//0001;
 let time = 0;
-let lambda = 2.5;//0.3と3
+let lambda = 2.3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
-let calcCount = Math.max(1,0.01/dt);
+let calcCount = Math.max(1,0.1/dt);
 const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 10;  
 const defaultTransmission = 1; // 透過率 
@@ -46,8 +46,8 @@ function makeSettingABSW(key,template) {
     console.log(`test${key}-${i}`,template.map(a=>a*c));
   }
 }
-makeSettingABSW(1,[0, 0, 0.5]);
-makeSettingABSW(2,[0.5, 0, 0]);
+makeSettingABSW(1,[0, 0, 0.1]);
+makeSettingABSW(2,[0.1, 0, 0]);
 
 
 function test2(x,y,dx,dy,material,tr=1) {
@@ -413,9 +413,9 @@ nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       const fact = 1000;
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.05//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]));
-      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = ((nextGrid[i][j] - grid[i][j]))*1.5;
+      let midFreq = (grid[i][j]*1.5 - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
       //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
