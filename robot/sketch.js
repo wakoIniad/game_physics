@@ -1,5 +1,6 @@
 let cols, rows;
 let grid = [];
+let prevPrevGrid = [];
 let prevGrid = [];
 let nextGrid = [];
 
@@ -9,7 +10,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = 5;//0.3と3
+let lambda = 0.2;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -69,6 +70,7 @@ function setup() {
   for (let i = 0; i < cols; i++) {
     grid[i] = [];
     prevGrid[i] = [];
+    prevPrevGrid[i] = [];
     nextGrid[i] = [];
 
     damping[i] = [];
@@ -79,6 +81,7 @@ function setup() {
     for (let j = 0; j < rows; j++) {
       grid[i][j] = 0;
       prevGrid[i][j] = 0;
+      prevPrevGrid[i][j] = 0;
       nextGrid[i][j] = 0;
       
       damping[i][j] = defaultDamping;
@@ -229,8 +232,8 @@ function drawF() {
   background(0,200);
 
   // 波の更新
-  for (let i = 3; i < cols - 3; i++) {
-    for (let j = 3; j < rows - 3; j++) {
+  for (let i = 4; i < cols - 4; i++) {
+    for (let j = 4; j < rows - 4; j++) {
       
       const gamma2 = Math.pow(waveSpeed[i][j]*dt/dx, 2);
       // 波動方程式の離散化（差分法）
@@ -257,14 +260,24 @@ function drawF() {
           grid[i + 2][j] + grid[i - 2][j] + grid[i][j + 2] + grid[i][j - 2] +
           grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] - 8 * grid[i][j]
       );*/
-      nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
+      /*nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
         grid[i + 3][j] + grid[i - 3][j] + grid[i][j + 3] + grid[i][j - 3] +
         grid[i + 2][j + 2] + grid[i + 2][j - 2] + grid[i - 2][j + 2] + grid[i - 2][j - 2] +
         grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] +
         grid[i + 3][j + 3] + grid[i + 3][j - 3] + grid[i - 3][j + 3] + grid[i - 3][j - 3] +
         grid[i + 2][j + 3] + grid[i + 2][j - 3] + grid[i - 2][j + 3] + grid[i - 2][j - 3] -
         20 * grid[i][j]
-    );
+    );*/
+    nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
+      grid[i + 4][j] + grid[i - 4][j] + grid[i][j + 4] + grid[i][j - 4] +
+      grid[i + 3][j + 3] + grid[i + 3][j - 3] + grid[i - 3][j + 3] + grid[i - 3][j - 3] +
+      grid[i + 2][j + 2] + grid[i + 2][j - 2] + grid[i - 2][j + 2] + grid[i - 2][j - 2] +
+      grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] +
+      grid[i + 4][j + 4] + grid[i + 4][j - 4] + grid[i - 4][j + 4] + grid[i - 4][j - 4] +
+      grid[i + 3][j + 4] + grid[i + 3][j - 4] + grid[i - 3][j + 4] + grid[i - 3][j - 4] +
+      grid[i + 2][j + 4] + grid[i + 2][j - 4] + grid[i - 2][j + 4] + grid[i - 2][j - 4] -
+      30 * grid[i][j]
+  );
 
 
       // 減衰を適用
@@ -400,6 +413,7 @@ function drawF() {
   // グリッドの更新
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
+      prevPrevGrid[i][j] = prevGrid[i][j];
       prevGrid[i][j] = grid[i][j];
       grid[i][j] = nextGrid[i][j];      // 描画
     }
