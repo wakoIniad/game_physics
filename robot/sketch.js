@@ -31,7 +31,7 @@ let materialAbsorption = {
   // 低・高のフィルターどちらかかってしまう
   //→異や反射してるのが原因みたい？
   "test3": [0,0,0],
-  "water": [0,  0.0, 0.5],
+  "water": [0,  0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
 let absw = 8;
@@ -354,7 +354,7 @@ function drawF() {
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       const fact = 1000;
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.01//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.05//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = ((nextGrid[i][j] - grid[i][j]));
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
