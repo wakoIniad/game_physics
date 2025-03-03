@@ -9,7 +9,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = 2;//0.3と3
+let lambda = 0.5;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -167,7 +167,7 @@ function draw() {
       const ab = materialAbsorption[materialType[i][j]]
       fill(c, c, ct);
       if(materialType[i][j].startsWith("test")) {
-      fill(...ab.map(a=>a*255+c))
+      fill(...ab.map(a=>a*255     *5    +c))
       //} else {
       //  //fill(c, cw, c);
       //  fill(c)
@@ -277,8 +277,14 @@ function drawF() {
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = nextGrid[i][j] - grid[i][j];
+      let highFreq = ((nextGrid[i][j] - grid[i][j]));
       let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
+      //問題
+      //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
+      //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
+      // prev now
+      // 1,  1   : 1,  0
+      // 1,  0   : 0.5 1
       // 1,1 : 1, 0, 1
       // 1,0 : 0.5, 1, -0.5
       // -1,1: 0, -2, 2
@@ -291,16 +297,16 @@ function drawF() {
       let attenuatedMid = midFreq   * (1-absorption[1]); // 中周波の減衰
       let attenuatedHigh = highFreq * (1-absorption[2]); // 高周波の減衰
 
-      //// 吸収後のエネルギーを計算
-      //let totalEnergy = Math.abs(nextGrid[i][j]) + Math.abs(midFreq) + Math.abs(highFreq);
-      //let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
-      //// エネルギーが増えないようにスケール補正
-      //if (newEnergy > totalEnergy && newEnergy > 0) {
-      //  let scale_ = totalEnergy / newEnergy;
-      //  attenuatedLow *= scale_;
-      //  attenuatedMid *= scale_;
-      //  attenuatedHigh *= scale_;
-      //}
+      // 吸収後のエネルギーを計算
+      let totalEnergy = Math.abs(lowFreq) + Math.abs(midFreq) + Math.abs(highFreq);
+      let newEnergy = Math.abs(attenuatedLow) + Math.abs(attenuatedMid) + Math.abs(attenuatedHigh);
+      // エネルギーが増えないようにスケール補正
+      if (newEnergy > totalEnergy && newEnergy > 0) {
+        let scale_ = totalEnergy / newEnergy;
+        attenuatedLow *= scale_;
+        attenuatedMid *= scale_;
+        attenuatedHigh *= scale_;
+      }
       const s = attenuatedLow + attenuatedMid + attenuatedHigh;
       if(nextGrid[i][j] > 0 && !(absorption[2] && absorption[0]))
         { 
