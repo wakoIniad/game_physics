@@ -8,13 +8,13 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.0005//0.0008;
+var dt = 0.0008//0.0005//0.0008;
 let time = 0;
-let lambda = .3;//0.3と2.3//0.3と3
+let lambda = 2.3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.05/dt);
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 5//10;  
+const defaultWaveSpeed = 10//5//10;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -156,7 +156,7 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
 let sum_damage = 0;
 let dlambda = 0.001
 function draw() {
-  lambda-=dlambda;
+  //lambda-=dlambda;
   if(lambda <= 0.3 || lambda >= 2.3) {
     dlambda*=-1;
   }
