@@ -8,9 +8,9 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.001//0001;
+var dt = 0.0008//0001;
 let time = 0;
-let lambda = 0.5;//0.3と3
+let lambda = 3;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -46,8 +46,8 @@ function makeSettingABSW(key,template) {
     console.log(`test${key}-${i}`,template.map(a=>a*c));
   }
 }
-makeSettingABSW(1,[0, 0, 0.1]);
-makeSettingABSW(2,[0.1, 0, 0]);
+makeSettingABSW(1,[0, 0, 0.5]);
+makeSettingABSW(2,[0.5, 0, 0]);
 
 
 function test2(x,y,dx,dy,material,tr=1) {
