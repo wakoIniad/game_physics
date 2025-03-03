@@ -1,6 +1,6 @@
 let cols, rows;
 let grid = [];
-let prevPrevGrid = [];
+//let prevPrevGrid = [];
 let prevGrid = [];
 let nextGrid = [];
 
@@ -10,7 +10,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0008//0.0005//0.0008;
 let time = 0;
-let lambda = .3;//0.3と2.3//0.3と3
+let lambda = 0.275;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.05/dt);
 const defaultDamping = 0; // 減衰率
@@ -50,17 +50,21 @@ makeSettingABSW(1,[0, 0, 0.3]);
 makeSettingABSW(2,[0.3, 0, 0]);
 
 
-function test2(x,y,dx,dy,material,tr=1) {
+function test2(x,y,dx,dy,material,tr=1,dp=0) {
   let xx = x - dx;
   let yy = y - dy;
   const M = Math.max(Math.abs(xx),Math.abs(yy));
   for(let i = 0;i < M;i++) {
     materialType[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = material;
-    transmission[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = tr
+    transmission[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = tr;
+    damping[~~(dx+xx*(i/M))][~~(dy+yy*(i/M))] = dp;
   }
 }
 
+let slider;
 function setup() {
+
+  slider = createSlider(0.275, 5);
   frameRate(60);
   createCanvas(1200, 120);
   cols = width / resolution;
@@ -70,7 +74,7 @@ function setup() {
   for (let i = 0; i < cols; i++) {
     grid[i] = [];
     prevGrid[i] = [];
-    prevPrevGrid[i] = [];
+   // prevPrevGrid[i] = [];
     nextGrid[i] = [];
 
     damping[i] = [];
@@ -81,7 +85,7 @@ function setup() {
     for (let j = 0; j < rows; j++) {
       grid[i][j] = 0;
       prevGrid[i][j] = 0;
-      prevPrevGrid[i][j] = 0;
+    //  prevPrevGrid[i][j] = 0;
       nextGrid[i][j] = 0;
       
       damping[i][j] = defaultDamping;
@@ -138,14 +142,15 @@ function setup() {
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*1/3+px);
     for(let i = 1;i <= absw; i++) {
-      test2(x-i,0,x-i,rows+1,`test2-${i}`,defaultTransmission);
+      const c = (1/1.5)**(absw-i);
+      test2(x+i,0,x+i,rows+1,`test2-${i}`,defaultTransmission,c*0.5);
     }
   }
   
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*2/3+px);
     for(let i = 1;i <= absw; i++) {
-      test2(x+i,0,x+i,rows+1,`test1-${i}`,defaultTransmission);
+      test2(x-i,0,x-i,rows+1,`test1-${i}`,defaultTransmission);
     }
   }
 }
@@ -166,7 +171,7 @@ function draw() {
     dlambda*=-1;
   }
   if(keyIsPressed) {
-    attack();
+    //attack();
   }
   for(var i = 0;i < calcCount;i++) {
     drawF();
@@ -200,6 +205,7 @@ function draw() {
     let y = floor(mouseY / resolution);
     if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
       console.log(x,y)
+      prevGrid[x][y] = 1;
       grid[x][y] = 1;
     }
   }
@@ -234,6 +240,8 @@ function attack() {
 }
 function drawF() {
 
+  if(keyIsPressed) {
+    lambda = slider.value();
   for(let i = -5;i < 5 ;i++) {
     for(let j = 1;j < rows -1;j++) {
    //   const offset = (lambda/i*dx)*2*Math.PI
@@ -245,13 +253,14 @@ function drawF() {
 
    prevGrid[cols-4][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
    grid[cols-4][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
-
+  
    
    prevGrid[4][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
    grid[4][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
     }
   }
+}
 
   //grid[cols-4][22] = 1;
 
@@ -468,7 +477,7 @@ nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
   // グリッドの更新
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
-      prevPrevGrid[i][j] = prevGrid[i][j];
+      //prevPrevGrid[i][j] = prevGrid[i][j];
       prevGrid[i][j] = grid[i][j];
       grid[i][j] = nextGrid[i][j];      // 描画
     }
