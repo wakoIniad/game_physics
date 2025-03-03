@@ -8,13 +8,13 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.01//0001;
+var dt = 0.001//0001;
 let time = 0;
-let lambda = 0.5;//0.3と3
+let lambda = 5;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 5;  
+const defaultWaveSpeed = 50;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
