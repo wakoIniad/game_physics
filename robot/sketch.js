@@ -249,26 +249,7 @@ function drawF() {
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
         ) ;
-        //2*(1-2*gamma2)*u[1][i][j] - u[0][i][j] + gamma2*(u[1][i+1][j]+u[1][i-1][j]+u[1][i][j+1]+u[1][i][j-1])
-        /**
-         * 2 * grid[1][i][j] - grid[0][i][j] +
-        gamma2 * (
-          grid[1][i+1][j] + 
-          grid[1][i-1][j]  +
-          grid[1][i][j+1] +
-          grid[1][i][j-1] - 4 * grid[i][j]
-          )
 
-          2 * (1-  2*gamma2) * grid[1][i][j] + 
-         * 
-         * 2 * grid[i][j] - prevGrid[i][j] +
-        waveSpeed[i][j] * (
-          grid[i+1][j] + 
-          grid[i-1][j]  +
-          grid[i][j+1] +
-          grid[i][j-1] - 4 * grid[i][j]
-          )
-         */
 
       // 減衰を適用
       const velocity = nextGrid[i][j] - grid[i][j];
@@ -281,14 +262,14 @@ function drawF() {
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
-      const smoothingFactor = absorption[0];
-      nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
+    //  const smoothingFactor = absorption[0];
+     // nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
 //if(velocity)      console.log(velocity)
       //let d = 1.0 - absorption[2] * Math.abs(velocity);
-      let d2 = absorption[2] * velocity;
+     // let d2 = absorption[2] * velocity;
       //nextGrid[i][j] = nextGrid[i][j] * d;
-      nextGrid[i][j] = nextGrid[i][j] - d2;
+     // nextGrid[i][j] = nextGrid[i][j] - d2;
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
@@ -324,7 +305,7 @@ function drawF() {
    // );
       }
       // 吸収後の値を反映
-      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
