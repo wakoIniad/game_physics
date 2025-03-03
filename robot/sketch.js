@@ -7,9 +7,11 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.001;
+var dt = 0.0001;
 let time = 0;
-let lambda = 1;
+let lambda = 0.5;
+let testAmp = 1;
+let calcCount = 0.001/dt
 const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 50;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
@@ -143,18 +145,13 @@ function draw() {
   if(keyIsPressed) {
     attack();
   }
-  //for(let i = 1;i < rows -1;i++) {
-  //  //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-  //  grid[cols-2][5] =      2;//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
-  //  
-  // }
-  for(var i = 0;i < 1;i++) {
+  for(var i = 0;i < calcCount;i++) {
     drawF();
   }
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
     
-      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
+      let c = map(Math.abs(grid[i][j]), 0, testAmp, 0, 255);
       let ct = map(1-transmission[i][j] -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
       fill(c, c, ct);
@@ -214,8 +211,8 @@ function attack() {
 function drawF() {
 
   for(let i = 1;i < rows -1;i++) {
-   prevGrid[cols/2][i] =  1*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols/2][i] =      1*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   prevGrid[cols/2][i] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols/2][i] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
   }
 
