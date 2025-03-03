@@ -98,7 +98,7 @@ function setup() {
     test2(x+0,rows/2+5,x+40,rows,"test2",1);
   }
   for(var i = 0;i < cols/40-1; i++) {
-    t2(i*40)
+    //t2(i*40)
   }
   //t2(20,"test1");
   //t2(80,"test2");
@@ -122,11 +122,11 @@ function setup() {
     damping[3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
-    test2(50+px,0,50+px,rows,"test2",1);
+    test2(~~(cols*1/4+px),0,~~(cols*1/4+px),rows,"test2",1);
   }
   
   for(let px = 0;px < 1;px++ ){
-    test2(150+px,0,150+px,rows,"test1",1);
+    test2(~~(cols*3/4+px),0,~~(cols*3/4+px),rows,"test1",1);
   }
 }
 
@@ -214,8 +214,8 @@ function attack() {
 function drawF() {
 
   for(let i = 1;i < rows -1;i++) {
-   prevGrid[cols-2][i] =  1*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols-2][i] =      1*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   prevGrid[cols/2][i] =  1*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols/2][i] =      1*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
   }
 
