@@ -122,11 +122,11 @@ function setup() {
     damping[3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
-    //test2(50+px,0,50+px,rows,"test2",0);
+    test2(50+px,0,50+px,rows,"test2",1);
   }
   
   for(let px = 0;px < 1;px++ ){
-    //test2(150+px,0,150+px,rows,"test1",0);
+    test2(150+px,0,150+px,rows,"test1",1);
   }
 }
 
@@ -281,14 +281,14 @@ function drawF() {
       // 各セルの素材を取得
       let material = materialType[i][j];
       let absorption = materialAbsorption[material];
-      //const smoothingFactor = absorption[0];
-      //nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
+      const smoothingFactor = absorption[0];
+      nextGrid[i][j] = (1 - smoothingFactor) * nextGrid[i][j] + smoothingFactor * grid[i][j];
 
 //if(velocity)      console.log(velocity)
       //let d = 1.0 - absorption[2] * Math.abs(velocity);
-      //let d2 = absorption[2] * velocity;
+      let d2 = absorption[2] * velocity;
       //nextGrid[i][j] = nextGrid[i][j] * d;
-      //nextGrid[i][j] = nextGrid[i][j] - d2;
+      nextGrid[i][j] = nextGrid[i][j] - d2;
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
@@ -324,7 +324,7 @@ function drawF() {
    // );
       }
       // 吸収後の値を反映
-      nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
+      //nextGrid[i][j] = attenuatedLow + attenuatedMid + attenuatedHigh;
     }
   }
 
