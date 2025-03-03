@@ -8,13 +8,13 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.0001;
+var dt = 0.001//0001;
 let time = 0;
-let lambda = 0.2;//0.3と3
+let lambda = 3;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 50;  
+const defaultWaveSpeed = 5;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -268,7 +268,7 @@ function drawF() {
         grid[i + 2][j + 3] + grid[i + 2][j - 3] + grid[i - 2][j + 3] + grid[i - 2][j - 3] -
         20 * grid[i][j]
     );*/
-    nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
+    /*nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
       grid[i + 4][j] + grid[i - 4][j] + grid[i][j + 4] + grid[i][j - 4] +
       grid[i + 3][j + 3] + grid[i + 3][j - 3] + grid[i - 3][j + 3] + grid[i - 3][j - 3] +
       grid[i + 2][j + 2] + grid[i + 2][j - 2] + grid[i - 2][j + 2] + grid[i - 2][j - 2] +
@@ -277,7 +277,20 @@ function drawF() {
       grid[i + 3][j + 4] + grid[i + 3][j - 4] + grid[i - 3][j + 4] + grid[i - 3][j - 4] +
       grid[i + 2][j + 4] + grid[i + 2][j - 4] + grid[i - 2][j + 4] + grid[i - 2][j - 4] -
       30 * grid[i][j]
-  );
+  );*/
+  const centralDiffX = (
+    -grid[i+2][j] + 16 * grid[i+1][j] - 30 * grid[i][j] +
+    16 * grid[i-1][j] - grid[i-2][j]
+) / 12;
+
+
+const centralDiffY = (
+    -grid[i][j+2] + 16 * grid[i][j+1] - 30 * grid[i][j] +
+    16 * grid[i][j-1] - grid[i][j-2]
+) / 12;
+
+nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
+    gamma2 * (centralDiffX + centralDiffY);
 
 
       // 減衰を適用
