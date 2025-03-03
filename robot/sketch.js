@@ -5,8 +5,13 @@ let nextGrid = [];
 
 let resolution = 2; // セルの大きさ
 
+//discreat param
+var dx = 0.1;
+var dt = 0.001;
+let time = 0;
+let lambda = 1;
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 0.5;  // 波の伝搬速度(1未満)
+const defaultWaveSpeed = 50;  // 波の伝搬速度(1未満)
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -18,8 +23,8 @@ let materialType = [];
 
 let materialAbsorption = {
   "none": [0, 0, 0],
-  "test1": [0, 0, 0.5],//増減が激しいとカット
-  "test2": [0.3, 0, 0],//増減が少ないとかっと
+  "test1": [0, 0, 0.9],//増減が激しいとカット
+  "test2": [0.9, 0, 0],//増減が少ないとかっと
   "test3": [0,0,0],
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
@@ -116,6 +121,13 @@ function setup() {
     damping[2][i] = 0.25;
     damping[3][i] = 0.125;
   }
+  for(let px = 0;px < 1;px++ ){
+    test2(50+px,0,50+px,rows,"test2",0);
+  }
+  
+  for(let px = 0;px < 1;px++ ){
+    test2(150+px,0,150+px,rows,"test1",0);
+  }
 }
 
 function lowPassFilter(currentValue, previousFilteredValue, a) {
@@ -128,36 +140,99 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
 }
 let sum_damage = 0;
 function draw() {
-
-  for(var i = 0;i < 1;i++) {
+  if(keyIsPressed) {
+    attack();
+  }
+  for(var i = 0;i < 10;i++) {
     drawF();
   }
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+    
+      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
+      let ct = map(1-transmission[i][j] -1, 1, 0, 255);
+      let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
+      fill(c, c, ct);
+      if(materialType[i][j].startsWith("test")) {
+        if(materialType[i][j] === "test1") {
+          fill(c,c,255)
+        } else {
+          fill(255,c,c)
+        }
+      } else {
+        //fill(c, cw, c);
+        fill(c)
+      }
+      noStroke();
+      rect(i * resolution, j * resolution, resolution, resolution);
+    }
+  }
+  
+  // 波を発生させる（クリック時）
+  if (mouseIsPressed) {
+    let x = floor(mouseX / resolution);
+    let y = floor(mouseY / resolution);
+    if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
+      console.log(x,y)
+      grid[x][y] = 2;
+    }
+  }
+  if(keyIsPressed) {
+    let x = floor(mouseX / resolution);
+    let y = floor(mouseY / resolution);
+    if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
+      transmission[x][y]   = 1;
+      transmission[x][y+1] = 1;
+      transmission[x][y-1] = 1;
+      transmission[x+1][y] = 1;
+      transmission[x-1][y] = 1;
+
+      
+      materialType[x][y]   = "test1";
+      materialType[x][y+1] = "test1";
+      materialType[x][y-1] = "test1";
+      materialType[x+1][y] = "test1";
+      materialType[x-1][y] = "test1";
+    }
+  }
+  console.log(sum_damage)
 }
 let rnd = Math.random()*1;
-let rnd2;
+let rnd2 = 1;
+function attack() {
+  //点で放出しないようにする
+  for(let i = 1;i < rows -1;i++) {
+    grid[cols-1][i] = rnd;
+    
+  }
+}
 function drawF() {
-  const wallX = (~~(frameCount/4));
+  //const wallX = (~~(frameCount/4));
   //test2(199-wallX,0,199-wallX,50,"test3",0);
   //test2(198-wallX,0,198-wallX,50,"test3",0.15);
   //test2(197-wallX,0,197-wallX,50,"test3",0.2);
   //test2(196-wallX,0,196-wallX,50,"test3",0.4);
   //test2(195-wallX,0,195-wallX,50,"test3",0.8);
-  if(frameCount%32 == 0) {
+ // if(frameCount%32 == 0) {
     rnd = 1||Math.random()*2;
-    rnd2 = 4||2+(~~(Math.random()*3));
-  }
-  if(frameCount%4 == 0) {
-    for (let i = 1; i < cols - 1; i++) {
+    //rnd2 = 4||2+(~~(Math.random()*3));
+  //}
+  //if(frameCount%4 == 0) {
+  //  for (let i = 1; i < cols - 1; i++) {
       //grid.pop();
-    }
+   // }
    // cols -= 1;
+  //}
+  //if(frameCount % rnd2 == 0) {
+  //  attack();
+  //  rnd2 = 10000;
+  //}
+  
+  for(let i = 1;i < rows -1;i++) {
+   prevGrid[cols-1][i] = Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols-1][i] = Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   
   }
-  if(frameCount % rnd2 == 0) {
-    for(let i = 1;i < rows -1;i++) {
-      //点で放出しないようにする
-      grid[cols-1][i] = rnd;
-    }
- }
 
   //grid[cols-4][22] = 1;
 
@@ -165,13 +240,14 @@ function drawF() {
   background(0,200);
 
   // 波の更新
-  for (let i = 1; i < cols - 1; i++) {
-    for (let j = 1; j < rows - 1; j++) {
+  for (let i = 2; i < cols - 2; i++) {
+    for (let j = 2; j < rows - 2; j++) {
       
+      const gamma2 = Math.pow(waveSpeed[i][j]*dt/dx, 2);
       // 波動方程式の離散化（差分法）
       nextGrid[i][j] = 
         2 * grid[i][j] - prevGrid[i][j] +
-        waveSpeed[i][j] * (
+        gamma2 * (
           grid[i+1][j] * transmission[i+1][j] + 
           grid[i-1][j] * transmission[i-1][j] +
           grid[i][j+1] * transmission[i][j+1] +
@@ -188,6 +264,26 @@ function drawF() {
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
         ) ;
+        //2*(1-2*gamma2)*u[1][i][j] - u[0][i][j] + gamma2*(u[1][i+1][j]+u[1][i-1][j]+u[1][i][j+1]+u[1][i][j-1])
+        /**
+         * 2 * grid[1][i][j] - grid[0][i][j] +
+        gamma2 * (
+          grid[1][i+1][j] + 
+          grid[1][i-1][j]  +
+          grid[1][i][j+1] +
+          grid[1][i][j-1] - 4 * grid[i][j]
+          )
+
+          2 * (1-  2*gamma2) * grid[1][i][j] + 
+         * 
+         * 2 * grid[i][j] - prevGrid[i][j] +
+        waveSpeed[i][j] * (
+          grid[i+1][j] + 
+          grid[i-1][j]  +
+          grid[i][j+1] +
+          grid[i][j-1] - 4 * grid[i][j]
+          )
+         */
 
       // 減衰を適用
       const velocity = nextGrid[i][j] - grid[i][j];
@@ -251,54 +347,9 @@ function drawF() {
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
       prevGrid[i][j] = grid[i][j];
-      grid[i][j] = nextGrid[i][j];
-
-      // 描画
-      let c = map(Math.abs(grid[i][j]), 0, 1, 0, 255);
-      let ct = map(1-transmission[i][j] -1, 1, 0, 255);
-      let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
-      fill(c, c, ct);
-      if(materialType[i][j].startsWith("test")) {
-        if(materialType[i][j] === "test1") {
-          fill(c,c,255)
-        } else {
-          fill(255,c,c)
-        }
-      } else {
-        //fill(c, cw, c);
-        fill(c)
-      }
-      noStroke();
-      rect(i * resolution, j * resolution, resolution, resolution);
+      grid[i][j] = nextGrid[i][j];      // 描画
     }
   }
 
-  // 波を発生させる（クリック時）
-  if (mouseIsPressed) {
-    let x = floor(mouseX / resolution);
-    let y = floor(mouseY / resolution);
-    if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      console.log(x,y)
-      grid[x][y] = 2;
-    }
-  }
-  if(keyIsPressed) {
-    let x = floor(mouseX / resolution);
-    let y = floor(mouseY / resolution);
-    if (x > 0 && x < cols - 1 && y > 0 && y < rows - 1) {
-      transmission[x][y]   = 1;
-      transmission[x][y+1] = 1;
-      transmission[x][y-1] = 1;
-      transmission[x+1][y] = 1;
-      transmission[x-1][y] = 1;
-
-      
-      materialType[x][y]   = "test1";
-      materialType[x][y+1] = "test1";
-      materialType[x][y-1] = "test1";
-      materialType[x+1][y] = "test1";
-      materialType[x-1][y] = "test1";
-    }
-  }
-  console.log(sum_damage)
+  time+=dt;
 }
