@@ -9,7 +9,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = 0.3;//0.3と3
+let lambda = .3;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -340,7 +340,7 @@ function drawF() {
       y=sin(x) 0 1 0 -1 -> yの値の変化は 一周期当たり4 dyの総和はこれに等しいので、
       dyの平均は4/(2PI/dx) .....であってる..??
       
-      highの平均値(?): 4/(2PI/dx) = 4/(2・(PI/dx)) = 2/(PI/dx)
+      highの平均値(?): 4/(2PI/dx) = 4/(2・(PI/dx)) = 2/(PI/dx) = 2/PI * dx
 
       lowの平均値(?): 2/PI
        
@@ -353,9 +353,9 @@ function drawF() {
       */
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]))*1;
-      let midFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5); // 中周波（補間成分）
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.1//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = ((nextGrid[i][j] - grid[i][j]));
+      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
       //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
