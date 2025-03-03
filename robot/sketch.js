@@ -14,7 +14,7 @@ let lambda = 2.3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.05/dt);
 const defaultDamping = 0; // 減衰率
-const defaultWaveSpeed = 10//5//10;  
+const defaultWaveSpeed = 50//5//10;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -125,10 +125,13 @@ function setup() {
   
   for(let i = 1;i < rows -1;i++) {
     //点で放出しないようにする
-    damping[0][i] = 1;
-    damping[1][i] = 0.5;
-    damping[2][i] = 0.25;
-    damping[3][i] = 0.125;
+    damping[cols/2][i] = 1;
+    damping[cols/2+1][i] = 0.5;
+    damping[cols/2+2][i] = 0.25;
+    damping[cols/2+3][i] = 0.125;
+    damping[cols/2-1][i] = 0.5;
+    damping[cols/2-2][i] = 0.25;
+    damping[cols/2-3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
     const x = ~~(cols*1/3+px);
@@ -154,9 +157,9 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
   return currentValue - lowPassValue;
 }
 let sum_damage = 0;
-let dlambda = 0.001
+let dlambda = 0.01;
 function draw() {
-  //lambda-=dlambda;
+  lambda-=dlambda;
   if(lambda <= 0.3 || lambda >= 2.3) {
     dlambda*=-1;
   }
@@ -234,9 +237,15 @@ function drawF() {
    //prevGrid[cols/2+i][j] =  testAmp*Math.sin(offset + 2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
    //grid[cols/2+i][j] =      testAmp*Math.sin(offset + 2 * Math.PI * time/(lambda/defaultWaveSpeed));
    //prevGrid[cols/2][rows/2] = 1.0;
-   prevGrid[cols/2][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols/2][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
-   //prevGrid[cols/2][rows/2] = 1.0;
+   //prevGrid[cols/2][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   //grid[cols/2][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+
+   prevGrid[cols-4][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols-4][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+
+   
+   prevGrid[4][j] =  testAmp*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[4][j] =      testAmp*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
     }
   }
