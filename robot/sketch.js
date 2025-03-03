@@ -313,10 +313,36 @@ function drawF() {
 
       0, 0.25 0.5
       l 0.375
-      m 0.0.25
-      h 0.5
+      m 0.25
+      h 0.25
 
+      0, 0.1 0.2
+      l 0.15
+      m 0.1
+      h 0.1
 
+      ------
+      0, 0.5 1
+      l 0.75 
+      m 0.25 
+      h 0.5  
+
+      0, 0.25 0.5
+      l 0.375 
+      m 0.125 
+      h 0.25  
+
+      0, 0.1 0.2
+      l 0.15 
+      m 0.05 
+      h 0.1  
+
+      y=sin(x) 0 1 0 -1 -> yの値の変化は 一周期当たり4 dyの総和はこれに等しいので、
+      dyの平均は4/(2PI/dx) .....であってる..??
+      
+      highの平均値(?): 4/(2PI/dx) = 4/(2・(PI/dx)) = 2/(PI/dx)
+
+      lowの平均値(?): 2/PI
        
       let lowFreq = (y+z)/2;
       let highFreq = (x - y);
@@ -327,9 +353,9 @@ function drawF() {
       */
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let highFreq = ((nextGrid[i][j] - grid[i][j]));
-      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
+      let lowFreq = lowPassFilter(nextGrid[i][j], grid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let highFreq = ((nextGrid[i][j] - grid[i][j]))*1;
+      let midFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
       //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
