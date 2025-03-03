@@ -9,7 +9,7 @@ let resolution = 2; // セルの大きさ
 var dx = 0.1;
 var dt = 0.0001;
 let time = 0;
-let lambda = 3;//0.3と3
+let lambda = 5;//0.3と3
 let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
@@ -229,12 +229,12 @@ function drawF() {
   background(0,200);
 
   // 波の更新
-  for (let i = 2; i < cols - 2; i++) {
-    for (let j = 2; j < rows - 2; j++) {
+  for (let i = 3; i < cols - 3; i++) {
+    for (let j = 3; j < rows - 3; j++) {
       
       const gamma2 = Math.pow(waveSpeed[i][j]*dt/dx, 2);
       // 波動方程式の離散化（差分法）
-      nextGrid[i][j] = 
+      /*nextGrid[i][j] = 
         2 * grid[i][j] - prevGrid[i][j] +
         gamma2 * (
           grid[i+1][j] * transmission[i+1][j] + 
@@ -252,7 +252,19 @@ function drawF() {
             //+ (transmission[i+1][j+1] + transmission[i-1][j-1] + 
             //transmission[i-1][j+1] + transmission[i+1][j-1]) * 2 ** 0.5
           )
-        ) ;
+        ) ;*/
+        /*nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
+          grid[i + 2][j] + grid[i - 2][j] + grid[i][j + 2] + grid[i][j - 2] +
+          grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] - 8 * grid[i][j]
+      );*/
+      nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] + gamma2 * (
+        grid[i + 3][j] + grid[i - 3][j] + grid[i][j + 3] + grid[i][j - 3] +
+        grid[i + 2][j + 2] + grid[i + 2][j - 2] + grid[i - 2][j + 2] + grid[i - 2][j - 2] +
+        grid[i + 1][j + 1] + grid[i + 1][j - 1] + grid[i - 1][j + 1] + grid[i - 1][j - 1] +
+        grid[i + 3][j + 3] + grid[i + 3][j - 3] + grid[i - 3][j + 3] + grid[i - 3][j - 3] +
+        grid[i + 2][j + 3] + grid[i + 2][j - 3] + grid[i - 2][j + 3] + grid[i - 2][j - 3] -
+        20 * grid[i][j]
+    );
 
 
       // 減衰を適用
