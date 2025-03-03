@@ -8,13 +8,13 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.0008//0001;
+var dt = 0.0005//0.0008;
 let time = 0;
-let lambda = 2.3;//0.3と2.3//0.3と3
+let lambda = .3;//0.3と2.3//0.3と3
 let testAmp = 1;//いったんここ１で固定する
-let calcCount = Math.max(1,0.1/dt);
-const defaultDamping = 0.001; // 減衰率
-const defaultWaveSpeed = 10;  
+let calcCount = Math.max(1,0.05/dt);
+const defaultDamping = 0; // 減衰率
+const defaultWaveSpeed = 5//10;  
 const defaultTransmission = 1; // 透過率 
 const defaultMaterialType = "none";
 
@@ -131,14 +131,14 @@ function setup() {
     damping[3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
-    const x = ~~(cols*2/9+px);
+    const x = ~~(cols*1/3+px);
     for(let i = 1;i <= absw; i++) {
       test2(x-i,0,x-i,rows,`test2-${i}`,defaultTransmission);
     }
   }
   
   for(let px = 0;px < 1;px++ ){
-    const x = ~~(cols*7/9+px);
+    const x = ~~(cols*2/3+px);
     for(let i = 1;i <= absw; i++) {
       test2(x+i,0,x+i,rows,`test1-${i}`,defaultTransmission);
     }
