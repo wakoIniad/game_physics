@@ -34,17 +34,19 @@ let materialAbsorption = {
   "water": [0,  0.0, 0.5],
   "glass": [0.5, 0.0, 0],
 };
-let absw = 8;
+let absw = 16;
 function makeSettingABSW(key,template) {
   console.log('-- -- --')
   for(let i = 1;i <= absw;i++) {
-    const c = (i/absw)**3;
+    //const c = (i/absw)**3;
+    //const c = (1/64)**((absw-i)/absw);
+    const c = (1/1.5)**(absw-i);
     materialAbsorption[`test${key}-${i}`] = template.map(a=>a*c);
     console.log(`test${key}-${i}`,template.map(a=>a*c));
   }
 }
-makeSettingABSW(1,[0, 0, 0.3]);
-makeSettingABSW(2,[0.3, 0, 0]);
+makeSettingABSW(1,[0, 0, 0.2]);
+makeSettingABSW(2,[0.2, 0, 0]);
 
 
 function test2(x,y,dx,dy,material,tr=1) {
