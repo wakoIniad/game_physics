@@ -122,11 +122,11 @@ function setup() {
     damping[3][i] = 0.125;
   }
   for(let px = 0;px < 1;px++ ){
-    test2(50+px,0,50+px,rows,"test2",0);
+    //test2(50+px,0,50+px,rows,"test2",0);
   }
   
   for(let px = 0;px < 1;px++ ){
-    test2(150+px,0,150+px,rows,"test1",0);
+    //test2(150+px,0,150+px,rows,"test1",0);
   }
 }
 
@@ -143,11 +143,11 @@ function draw() {
   if(keyIsPressed) {
     attack();
   }
-  for(let i = 1;i < rows -1;i++) {
-    //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-    grid[cols-2][5] =      2;//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
-    
-   }
+  //for(let i = 1;i < rows -1;i++) {
+  //  //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+  //  grid[cols-2][5] =      2;//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+  //  
+  // }
   for(var i = 0;i < 1;i++) {
     drawF();
   }
@@ -214,8 +214,8 @@ function attack() {
 function drawF() {
 
   for(let i = 1;i < rows -1;i++) {
-   //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   //grid[cols-1][i] =      1//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   prevGrid[cols-2][i] =  1*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   grid[cols-2][i] =      1*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
   }
 
