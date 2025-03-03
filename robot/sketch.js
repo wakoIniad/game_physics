@@ -143,7 +143,12 @@ function draw() {
   if(keyIsPressed) {
     attack();
   }
-  for(var i = 0;i < 10;i++) {
+  for(let i = 1;i < rows -1;i++) {
+    //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+    grid[cols-2][5] =      2;//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+    
+   }
+  for(var i = 0;i < 1;i++) {
     drawF();
   }
   for (let i = 0; i < cols; i++) {
@@ -207,30 +212,10 @@ function attack() {
   }
 }
 function drawF() {
-  //const wallX = (~~(frameCount/4));
-  //test2(199-wallX,0,199-wallX,50,"test3",0);
-  //test2(198-wallX,0,198-wallX,50,"test3",0.15);
-  //test2(197-wallX,0,197-wallX,50,"test3",0.2);
-  //test2(196-wallX,0,196-wallX,50,"test3",0.4);
-  //test2(195-wallX,0,195-wallX,50,"test3",0.8);
- // if(frameCount%32 == 0) {
-    rnd = 1||Math.random()*2;
-    //rnd2 = 4||2+(~~(Math.random()*3));
-  //}
-  //if(frameCount%4 == 0) {
-  //  for (let i = 1; i < cols - 1; i++) {
-      //grid.pop();
-   // }
-   // cols -= 1;
-  //}
-  //if(frameCount % rnd2 == 0) {
-  //  attack();
-  //  rnd2 = 10000;
-  //}
-  
+
   for(let i = 1;i < rows -1;i++) {
-   prevGrid[cols-1][i] = Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
-   grid[cols-1][i] = Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
+   //prevGrid[cols-1][i] =  100*Math.sin(2 * Math.PI * (-dt)/(lambda/defaultWaveSpeed));
+   //grid[cols-1][i] =      1//10000*Math.sin(2 * Math.PI * time/(lambda/defaultWaveSpeed));
    
   }
 
