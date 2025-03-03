@@ -7,10 +7,10 @@ let resolution = 2; // セルの大きさ
 
 //discreat param
 var dx = 0.1;
-var dt = 0.001;
+var dt = 0.0001;
 let time = 0;
-let lambda = 0.3;//0.3と3
-let testAmp = 0.25;
+let lambda = 1;//0.3と3
+let testAmp = 1;//いったんここ１で固定する
 let calcCount = Math.max(1,0.01/dt);
 const defaultDamping = 0; // 減衰率
 const defaultWaveSpeed = 50;  
@@ -24,6 +24,8 @@ let materialType = [];
 
 
 let materialAbsorption = {
+  //周波数ごとの減衰率
+  /**<-low high-> */
   "none": [0, 0, 0],
   "test1": [0, 0, 0.9],//増減が激しいとカット
   "test2": [0.9, 0, 0],//増減が少ないとかっと
@@ -154,17 +156,19 @@ function draw() {
       let c = map(Math.abs(grid[i][j]), 0, testAmp, 0, 255);
       let ct = map(1-transmission[i][j] -1, 1, 0, 255);
       let cw = map(waveSpeed[i][j], 0, 1, 0, 255);
+      const ab = materialAbsorption[materialType[i][j]]
       fill(c, c, ct);
-      if(materialType[i][j].startsWith("test")) {
-        if(materialType[i][j] === "test1") {
-          fill(c,c,255)
-        } else {
-          fill(255,c,c)
-        }
-      } else {
-        //fill(c, cw, c);
-        fill(c)
-      }
+      fill(...ab.map(a=>a*255+c))
+      //if(materialType[i][j].startsWith("test")) {
+      //  if(materialType[i][j] === "test1") {
+      //    fill(c,c,255)
+      //  } else {
+      //    fill(255,c,c)
+      //  }
+      //} else {
+      //  //fill(c, cw, c);
+      //  fill(c)
+      //}
       noStroke();
       rect(i * resolution, j * resolution, resolution, resolution);
     }
@@ -267,6 +271,7 @@ function drawF() {
      // let d2 = absorption[2] * velocity;
       //nextGrid[i][j] = nextGrid[i][j] * d;
      // nextGrid[i][j] = nextGrid[i][j] - d2;
+     //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       let highFreq = nextGrid[i][j] - grid[i][j];
