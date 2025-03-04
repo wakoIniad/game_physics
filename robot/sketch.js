@@ -446,12 +446,13 @@ nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
       // 周波数成分を分解
       const fact = 1000;
       //let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;
-      let lowFreq = (nextGrid[i][j] + grid[i][j])//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      //let lowFreq = (nextGrid[i][j] + grid[i][j])//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)//(nextGrid[i][j] + prevGrid[i][j]) / 2;
       //振幅の２乗 OR エネルギー移動 に比例
       lowFreq = Math.sign(lowFreq) * lowFreq**2;
       
-      let highFreq = ((nextGrid[i][j] - grid[i][j]))*1.5;
-      let midFreq = (grid[i][j]*1.5 - lowFreq); // 中周波（補間成分）
+      let highFreq = ((nextGrid[i][j] - grid[i][j]));
+      let midFreq = (grid[i][j] - lowFreq); // 中周波（補間成分）
       //問題
       //lowがhighと比べて常に値が大きくなる。逆にhighはめっちゃ小さい (主に変化量が小さいときに問題)
       //振幅が１の波ならlowはmax1だけどhighは2 (主に変化量が大きい時に問題)
