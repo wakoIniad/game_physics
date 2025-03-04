@@ -163,6 +163,9 @@ function highPassFilter(currentValue, previousInputValue, previousLowPassValue, 
   let lowPassValue = lowPassFilter(previousInputValue, previousLowPassValue, b);
   return currentValue - lowPassValue;
 }
+function filter(currentValue, previousValue, a) {
+  return (1-2*a) * previousValue + (1+2*a) * previousValue
+}
 let sum_damage = 0;
 let dlambda = 0.01;
 function draw() {
@@ -442,7 +445,11 @@ nextGrid[i][j] = 2 * grid[i][j] - prevGrid[i][j] +
      //変化が小さくなる→ローパスに良く反応する
       // 周波数成分を分解
       const fact = 1000;
-      let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      //let lowFreq = lowPassFilter(nextGrid[i][j], prevGrid[i][j], 0.5)*0.5//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      let lowFreq = (nextGrid[i][j] + grid[i][j])//(nextGrid[i][j] + prevGrid[i][j]) / 2;
+      //振幅の２乗 OR エネルギー移動 に比例
+      lowFreq = Math.sign(lowFreq) * lowFreq**2;
+      
       let highFreq = ((nextGrid[i][j] - grid[i][j]))*1.5;
       let midFreq = (grid[i][j]*1.5 - lowFreq); // 中周波（補間成分）
       //問題
