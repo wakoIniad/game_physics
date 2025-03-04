@@ -66,7 +66,7 @@ function setup() {
 
   slider = createSlider(0.275, 5);
   frameRate(60);
-  createCanvas(1200, 120);
+  createCanvas(800, 60);
   cols = width / resolution;
   rows = height / resolution;
 
@@ -230,7 +230,9 @@ function draw() {
       materialType[x-1][y] = "test1";
     }
   }
-  console.log(sum_damage)
+  console.log(sum_damage);
+  
+  lambda = slider.value();
 }
 let rnd = Math.random()*1;
 let rnd2 = 1;
@@ -243,8 +245,7 @@ function attack() {
 }
 function drawF() {
 
-  if(keyIsPressed) {
-    lambda = slider.value();
+//  if(keyIsPressed) {
   for(let i = -5;i < 5 ;i++) {
     for(let j = 1;j < rows -1;j++) {
    //   const offset = (lambda/i*dx)*2*Math.PI
@@ -263,7 +264,7 @@ function drawF() {
    
     }
   }
-}
+//}
 
   //grid[cols-4][22] = 1;
 
