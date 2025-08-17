@@ -5,7 +5,7 @@ new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
 function setup() {
   createCanvas(400, 400);
-  frameRate(8);
+  frameRate(16);
 }
 
 //上下左右の重みを強くして曲線的な変化にする
@@ -23,10 +23,10 @@ const rule = [
     //0,4
     //1,2,3
     //4,
-    0
+    0,2
   ],
   [
-    1
+    1,4
     //8
     //1,2,3,4,5,6,7
     //0,1,2,3,4,5,6,7,8
