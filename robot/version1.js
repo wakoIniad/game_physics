@@ -53,10 +53,10 @@ function update() {
         p[1] += ts[1];
       }
       total = ~~(8*total/WEIGHT_SUM)
-      if(rule[0].includes(total) && m[i][j] < 0.5) {
-        m[i][j] += 1;
-      } else if(!(rule[1].includes(total)) && m[i][j] > 0.5/*ref[i][j]*/) {
-        m[i][j] -= 1;
+      if(rule[0].includes(total)) {
+        m[i][j] = 1;
+      } else if(!(rule[1].includes(total)) && ref[i][j]) {
+        m[i][j] = 0;
       }
     }  
   }
@@ -64,8 +64,7 @@ function update() {
   const ref2 = m.map(arr=>[...arr]);
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) { 
-      //if(m[i][j] != ref2[i][j]){   
-      if(m[i][j] - ref2[i][j] > 0.5){  
+      if(m[i][j] != ref2[i][j]){   
         m[i][j]= 1-myf(ref2,i,j,true);
       }else {
         m[i][j] = myf(ref2,i,j,true);
