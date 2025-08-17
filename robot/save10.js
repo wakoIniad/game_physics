@@ -1,4 +1,4 @@
-const SIZE = 64;
+const SIZE = 24;
 const m = new Array(SIZE).fill(0).map(_=>
 new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
@@ -9,7 +9,7 @@ function setup() {
 
 //上下左右の重みを強くして曲線的な変化にする
 const weight = [
-  1,1,2,2,4,4,8,8//,16,//1,4,2,3,3,2,4,1//-1,1,-1,2,-1,4,-1,2,-1
+  1,4,2,3,3,2,4,1//-1,1,-1,2,-1,4,-1,2,-1
 ]; // -> ４近傍が大きい時、最大値に近いそうでない時最小値に近い
 const WEIGHT_SUM = weight.reduce((sum,v)=>sum+v,0)
 const rule = [
@@ -19,7 +19,7 @@ const rule = [
     //2,//波の発生減たち
     //3,2
     //2,4
-    0,4
+    0
     //4,
   ],
   [
@@ -60,15 +60,15 @@ function update() {
     }  
   }
    
-  for(let i = 0;i < SIZE;i++) {
+  /*for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       if((~~m[i][j])!=(~~ref[i][j])){
-        m[i][j]= myf(ref,i,j,true);
+        m[i][j]= 0;//1-myf(ref,i,j,true);
       }else {
-        m[i][j] = 1-myf(ref,i,j,true);
+        m[i][j] = 1;//myf(ref,i,j,true);
       }
     }
-  }
+  }*/
 }
 
 function myf(ref,i,j,removeSelf=false) {
@@ -89,7 +89,7 @@ function myf(ref,i,j,removeSelf=false) {
     }
     return total;
 }
-const MODE = //"RAW";
+const MODE = "RAW";
 "FILTERED";
 function draw() {
   background(220);

@@ -4,54 +4,63 @@ new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
 function setup() {
   createCanvas(400, 400);
-  frameRate(4);
+  frameRate(24);
 }
+const timeStepLength = 1;
+const timeWeight = [
+    1,1,1,1
+];
+const TIMEWEIGHT_SUM = timeWeight.reduce((sum,v)=>sum+v,0)
+
+const log = [];
 
 //上下左右の重みを強くして曲線的な変化にする
 const weight = [
-  1,1,2,2,4,4,8,8//,16,//1,4,2,3,3,2,4,1//-1,1,-1,2,-1,4,-1,2,-1
-]; // -> ４近傍が大きい時、最大値に近いそうでない時最小値に近い
+    1,2,1,2,1,2,1,2
+];
 const WEIGHT_SUM = weight.reduce((sum,v)=>sum+v,0)
 const rule = [
 
   [
-    //1,
-    //2,//波の発生減たち
-    //3,2
-    //2,4
-    0,4
-    //4,
+    0,//波の発生減たち
+    1,
+    2,
   ],
   [
-    8
-    //1,2,3,4,5,6,7
-    //0,1,2,3,4,5,6,7,8
-//4,5,6 // ここの値を大きくするとなんか変化が大雑把な感じ
+4 // ここの値を大きくするとなんか変化が大雑把な感じ
   ]
 ];
-
 function update() {
   const ref = m.map(arr=>[...arr]);
+  log.push(ref);
+  if(log.length > timeStepLength) {
+    log.shift();
+  }
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-      const ts = [1, 0];
-      const p = [-1,-1];
       let total = 0;
-      for(let _ = 0;_ < 8;_++) {
-        if(_ && _ % 2 === 0) {
-          ts.reverse();
-          if(ts[0]) {
-            ts[0] *= -1;
+      for(let v = 0;v < log.length;v++) {
+        const nowref = log[v];
+        const ts = [1, 0];
+        const p = [-1,-1];
+        let nowtotal = 0;
+        for(let _ = 0;_ < 8;_++) {
+          if(_ && _ % 2 === 0) {
+            ts.reverse();
+            if(ts[0]) {
+              ts[0] *= -1;
+            }
           }
+          const x = p[0] + i;
+          const y = p[1] + j;
+          nowtotal += weight[_]*nowref[(x + SIZE)%SIZE][(y + SIZE)%SIZE];
+          //console.log(i,j,(x + SIZE)%SIZE, (y + SIZE)%SIZE);
+          p[0] += ts[0];
+          p[1] += ts[1];
         }
-        const x = p[0] + i;
-        const y = p[1] + j;
-        total += weight[_]*ref[(x + SIZE)%SIZE][(y + SIZE)%SIZE];
-        //console.log(i,j,(x + SIZE)%SIZE, (y + SIZE)%SIZE);
-        p[0] += ts[0];
-        p[1] += ts[1];
+        total += timeWeight[v] * nowtotal;
       }
-      total = ~~(8*total/WEIGHT_SUM)
+      total = ~~(8*total/WEIGHT_SUM/TIMEWEIGHT_SUM)
       if(rule[0].includes(total)) {
         m[i][j] = 1;
       } else if(!(rule[1].includes(total)) && ref[i][j]) {
@@ -63,9 +72,9 @@ function update() {
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       if((~~m[i][j])!=(~~ref[i][j])){
-        m[i][j]= myf(ref,i,j,true);
+        m[i][j]=1;
       }else {
-        m[i][j] = 1-myf(ref,i,j,true);
+        m[i][j] = 0;
       }
     }
   }
@@ -89,7 +98,7 @@ function myf(ref,i,j,removeSelf=false) {
     }
     return total;
 }
-const MODE = //"RAW";
+const MODE = //"RAW"
 "FILTERED";
 function draw() {
   background(220);
