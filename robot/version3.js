@@ -5,7 +5,7 @@ new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
 function setup() {
   createCanvas(400, 400);
-  frameRate(10);
+  frameRate(16);
 }
 
 //上下左右の重みを強くして曲線的な変化にする
@@ -104,7 +104,7 @@ function draw() {
   noStroke();
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-        col[i][j] = 0.5+/*m[i][j]*/myf(m,i,j)/2;
+        col[i][j] = 0.5+m[i][j]/2;
         fill(255*col[i][j]);
         rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
