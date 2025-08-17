@@ -1,11 +1,10 @@
-//RAINY_NOISE
 const SIZE = 64;
 const m = new Array(SIZE).fill(0).map(_=>
 new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
 function setup() {
   createCanvas(400, 400);
-  frameRate(8);
+  frameRate(4);
 }
 
 //上下左右の重みを強くして曲線的な変化にする
@@ -65,18 +64,11 @@ function update() {
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       //if((~~ref2[i][j])!=(~~ref[i][j])){
-//      if((~~m[i][j])!=(~~ref[i][j])){
       if((~~m[i][j])!=(~~ref[i][j])){
         m[i][j]= myf(ref,i,j,true);
       }else {
         m[i][j] = 1-myf(ref,i,j,true);
       }
-    }
-  }
-  
-  for(let i = 0;i < SIZE;i++) {
-    for(let j = 0;j < SIZE;j++) {
-        m[i][j]+=(1-Math.random()**2-0.5)/4//10;
     }
   }
 }
@@ -105,7 +97,6 @@ function draw() {
   background(220);
   update();
   fill(0);
-  noStroke();
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       if(MODE == "FILTERED") {
@@ -113,7 +104,7 @@ function draw() {
          fill(0,0,0,myf(m,i,j)*255);
          rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
       } else 
-      if(m[i][j]>0.5) rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
+      if(m[i][j]) rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
   }
 }

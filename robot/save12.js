@@ -1,4 +1,3 @@
-//RAINY_NOISE
 const SIZE = 64;
 const m = new Array(SIZE).fill(0).map(_=>
 new Array(SIZE).fill().map(_=>
@@ -73,12 +72,6 @@ function update() {
       }
     }
   }
-  
-  for(let i = 0;i < SIZE;i++) {
-    for(let j = 0;j < SIZE;j++) {
-        m[i][j]+=(1-Math.random()**2-0.5)/4//10;
-    }
-  }
 }
 
 function myf(ref,i,j,removeSelf=false) {
@@ -105,7 +98,6 @@ function draw() {
   background(220);
   update();
   fill(0);
-  noStroke();
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       if(MODE == "FILTERED") {
