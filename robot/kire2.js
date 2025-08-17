@@ -64,7 +64,11 @@ function update() {
   const ref2 = m.map(arr=>[...arr]);
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-      if(m[i][j] != ref2[i][j] > 0.5){
+      //更新タイミングの関係で
+      //斜めの線ができない
+      //if((~~ref2[i][j])!=(~~ref[i][j])){
+//      if((~~m[i][j])!=(~~ref[i][j])){
+      if((~~m[i][j])!=(~~ref2[i][j])){
         m[i][j]= 1-myf(ref2,i,j,true);
       }else {
         m[i][j] = myf(ref2,i,j,true);
@@ -74,10 +78,9 @@ function update() {
   
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-        //console.log(~~((1-Math.random()**2-0.5)/1));
-        //m[i][j]+=~~((1-Math.random()**2-0.5)/4);
-        //m[i][j]+=((1-Math.random()**2-0.5)/16);
-        //m[i][j]=Math.floor(m[i][j]);
+      //** 雨の強さ変えたいときはここを変更 **//
+        //m[i][j]+=(1-Math.random()**2-0.5)/4//10;
+        m[i][j]+=(1-Math.random()**2-0.5)/4//10;
     }
   }
 }
@@ -104,13 +107,20 @@ function draw() {
   
  const col = new Array(SIZE).fill(0).map(_=>
  new Array(SIZE).fill().map(_=>220));
+  background(220);
   update();
+  fill(0);
   noStroke();
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-        col[i][j] = 0.5+myf(m,i,j)/2;
-        fill(255*col[i][j]);
+//        console.log(myf(i,j));
+        
+        //fill(0,0,0,128-myf(m,i,j)*255);
+        col[i][j] = 255-myf(m,i,j)*255;
+        fill(col[i]);
         rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
+      
+      //if(m[i][j]>0.5) rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
   }
 }

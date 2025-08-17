@@ -64,7 +64,9 @@ function update() {
   const ref2 = m.map(arr=>[...arr]);
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
+      //if((~~m[i][j])!=(~~ref2[i][j])){
       if(m[i][j] != ref2[i][j] > 0.5){
+      //if(m[i][j] - ref2[i][j] > 0.5){
         m[i][j]= 1-myf(ref2,i,j,true);
       }else {
         m[i][j] = myf(ref2,i,j,true);
@@ -74,10 +76,9 @@ function update() {
   
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
-        //console.log(~~((1-Math.random()**2-0.5)/1));
-        //m[i][j]+=~~((1-Math.random()**2-0.5)/4);
-        //m[i][j]+=((1-Math.random()**2-0.5)/16);
-        //m[i][j]=Math.floor(m[i][j]);
+      //** 雨の強さ変えたいときはここを変更 **//
+        //m[i][j]+=(1-Math.random()**2-0.5)/4//10;
+        m[i][j]+=~~((1-Math.random()**2-0.5)/4)//10;
     }
   }
 }
