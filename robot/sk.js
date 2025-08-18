@@ -88,6 +88,8 @@ function draw() {
   
  const col = new Array(SIZE).fill(0).map(_=>
  new Array(SIZE).fill().map(_=>220));
+ const col2 = new Array(SIZE).fill(0).map(_=>
+ new Array(SIZE).fill().map(_=>[0,1,0]));
   //2回やるの重要
   update();
   update();
@@ -95,7 +97,25 @@ function draw() {
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
         col[i][j] = 0.5+myf(m,i,j)/2;
-        fill(255*col[i][j]);
+        //fill(255*col[i][j]);
+        //rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
+    }
+  }
+  for(let i = 0;i < SIZE;i++) {
+    for(let j = 0;j < SIZE;j++) {
+        col2[i][j][0] = col[(i+1)%SIZE][j]- col[(i-1+SIZE)%SIZE][j];
+        col2[i][j][2] = col[i][(j+1)%SIZE]- col[i][(j-1+SIZE)%SIZE];
+        //0を下回る可能性もあるがその場合、片面のみ描画なら透過してそらが透けてるような感じになるかもなので残しておく
+        col2[i][j][1] = 1- col2[i][j][0]**2 - col2[i][j][2]**2
+        const abs = (col2[i][j][0] ** 2 + col2[i][j][1] + col2[i][j][2] ** 2);
+        col2[i][j][0]/=abs;
+        col2[i][j][1]/=abs;
+        col2[i][j][2]/=abs;
+    }
+  }
+  for(let i = 0;i < SIZE;i++) {
+    for(let j = 0;j < SIZE;j++) {
+        fill(...col2[i][j].map(v=>v*255));
         rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
   }
