@@ -5,7 +5,7 @@ new Array(SIZE).fill().map(_=>
   Math.round(Math.random())));
 function setup() {
   createCanvas(400, 400);
-  frameRate(10);
+  frameRate(4);
 }
 
 //上下左右の重みを強くして曲線的な変化にする
@@ -106,11 +106,17 @@ function draw() {
         col2[i][j][0] = col[(i+1)%SIZE][j]- col[(i-1+SIZE)%SIZE][j];
         col2[i][j][2] = col[i][(j+1)%SIZE]- col[i][(j-1+SIZE)%SIZE];
         //0を下回る可能性もあるがその場合、片面のみ描画なら透過してそらが透けてるような感じになるかもなので残しておく
-        col2[i][j][1] = 1- col2[i][j][0]**2 - col2[i][j][2]**2
+        col2[i][j][1] = (1- col2[i][j][0]**2 - col2[i][j][2]**2);
         const abs = (col2[i][j][0] ** 2 + col2[i][j][1] + col2[i][j][2] ** 2);
         col2[i][j][0]/=abs;
         col2[i][j][1]/=abs;
         col2[i][j][2]/=abs;
+        col2[i][j][0]+=1;
+        col2[i][j][1]+=1;
+        col2[i][j][2]+=1;
+        col2[i][j][0]/=2;
+        col2[i][j][1]/=2;
+        col2[i][j][2]/=2;
     }
   }
   for(let i = 0;i < SIZE;i++) {
