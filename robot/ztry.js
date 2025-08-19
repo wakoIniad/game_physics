@@ -1,0 +1,101 @@
+//コースティクス生成用ルール！
+const SIZE = 32;
+const m = new Array(SIZE).fill(0).map(_=>
+new Array(SIZE).fill().map(_=>
+  Math.round(Math.random())));
+function setup() {
+  createCanvas(400, 400);
+  frameRate(8);
+  let total = 0;
+  for(w in weight) {
+    total += w;
+  }
+  WEIGHT_SUM = total;
+}
+
+//曲線的な変化にする
+const weight = [
+    1,2,1,2,1,2,1,2
+];
+let WEIGHT_SUM;
+const rule = [
+
+  [
+    0,//波の発生源たち
+    1,
+    2,
+  ],
+  [
+4 // 個々の値を変更すると変化＆収束スピードが大雑把な感じになる
+  ]
+];
+
+function update() {
+  const ref = m.map(arr=>[...arr]);
+  for(let i = 0;i < SIZE;i++) {
+    for(let j = 0;j < SIZE;j++) {
+      const ts = [1, 0];
+      const p = [-1,-1];
+      let total = 0;
+      for(let _ = 0;_ < 8;_++) {
+        if(_ && _ % 2 === 0) {
+          let temp = ts[0];
+          ts[0] = ts[1];
+          ts[1] = temp;
+          if(ts[0]) {
+            ts[0] *= -1;
+          }
+        }
+        const x = p[0] + i;
+        const y = p[1] + j;
+        total += weight[_]*ref[(x + SIZE)%SIZE][(y + SIZE)%SIZE];
+        p[0] += ts[0];
+        p[1] += ts[1];
+      }
+      total = Math.floor(8*total/WEIGHT_SUM)
+      if(rule[0].includes(total)) {
+        m[i][j] = 1;
+      } else if(!(rule[1].includes(total)) && ref[i][j]) {
+        m[i][j] = 0;
+      }
+    }  
+  }
+  
+  for(let i = 0;i < SIZE;i++) {
+    for(let j = 0;j < SIZE;j++) {
+      if(m[i][j]!=ref[i][j]){
+        m[i][j]=1;
+      }else {
+        m[i][j] = 0;
+      }
+    }
+  }
+}
+
+function myf(i,j) {
+    let total = 0;
+    const filterWeight = [
+        1/16,2/16,1/16,
+        2/16,4/16,2/16,
+        1/16,2/16,1/16
+    ];
+    let at = 0;
+    for(let s = -1;s < 2; s++) {
+        for(let t = -1;t < 2; t++) {
+            total += filterWeight[at] * 
+            m[((j+t) + SIZE)%SIZE][((i+s) + SIZE)%SIZE];
+            at++;
+        }
+    }
+    return total;
+}
+function draw() {
+  update();
+  for(let i = 0;i < SIZE;i++) {
+    for(let j = 0;j < SIZE;j++) {
+      //myf(i,j)
+      fill(0,0,0,myf(i,j)*255);
+      rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
+    }
+  }
+}
