@@ -1,4 +1,3 @@
-//コースティクス生成用ルール！
 const SIZE = 32;
 const m = new Array(SIZE).fill(0).map(_=>
 new Array(SIZE).fill().map(_=>
@@ -6,22 +5,17 @@ new Array(SIZE).fill().map(_=>
 function setup() {
   createCanvas(400, 400);
   frameRate(8);
-  let total = 0;
-  for(w of weight) {
-    total += w;
-  }
-  WEIGHT_SUM = total;
 }
 
 //曲線的な変化にする
 const weight = [
     1,2,1,2,1,2,1,2
 ];
-let WEIGHT_SUM;
+const WEIGHT_SUM = weight.reduce((sum,v)=>sum+v,0)
 const rule = [
 
   [
-    0,//波の発生源たち
+    0,//波の発生たち
     1,
     2,
   ],
@@ -39,9 +33,7 @@ function update() {
       let total = 0;
       for(let _ = 0;_ < 8;_++) {
         if(_ && _ % 2 === 0) {
-          let temp = ts[0];
-          ts[0] = ts[1];
-          ts[1] = temp;
+          ts.reverse();
           if(ts[0]) {
             ts[0] *= -1;
           }
@@ -91,11 +83,11 @@ function myf(i,j) {
 }
 function draw() {
   update();
+  background(255)
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       //myf(i,j)
-      fill(myf(i,j)*255);
-      print(myf(i,j));
+      fill(0,0,0,myf(i,j)*255);
       rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
   }

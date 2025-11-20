@@ -7,7 +7,7 @@ function setup() {
   createCanvas(400, 400);
   frameRate(8);
   let total = 0;
-  for(w of weight) {
+  for(w in weight) {
     total += w;
   }
   WEIGHT_SUM = total;
@@ -94,8 +94,7 @@ function draw() {
   for(let i = 0;i < SIZE;i++) {
     for(let j = 0;j < SIZE;j++) {
       //myf(i,j)
-      fill(myf(i,j)*255);
-      print(myf(i,j));
+      fill(0,0,0,myf(i,j)*255);
       rect(width/SIZE * i, height/SIZE * j, width/SIZE, width/SIZE);
     }
   }
